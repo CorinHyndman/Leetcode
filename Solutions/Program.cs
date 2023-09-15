@@ -1,7 +1,6 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿Console.WriteLine("");
 
-int[] nums = { -1, 0, 3, 5, 9, 12 };
-Console.WriteLine(Solution.Search(nums,9)) ;
+
 
 public class Solution
 {
@@ -22,6 +21,26 @@ public class Solution
             }
         }
         return result;
+    }
+    #endregion
+    #region 3. Longest Substring Without Repeating Characters
+    public int LengthOfLongestSubstring(string s)
+    {
+        int maxSubstringLength = 0;
+        Queue<char> chars = new();
+        foreach (char c in s)
+        {
+            while (chars.Contains(c))
+            {
+                chars.Dequeue();
+            }
+            chars.Enqueue(c);
+            if (chars.Count > maxSubstringLength)
+            {
+                maxSubstringLength = chars.Count;
+            }
+        }
+        return maxSubstringLength;
     }
     #endregion
     #region 9. Palidrome
