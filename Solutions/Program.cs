@@ -1,5 +1,10 @@
-﻿Console.WriteLine("");
+﻿
 
+
+
+using System.Collections.Immutable;
+
+Solution.LetterCombinations("23");
 
 
 public class Solution
@@ -43,6 +48,66 @@ public class Solution
         return maxSubstringLength;
     }
     #endregion
+    #region 4. Median of Two Sorted Arrays
+    public static double FindMedianSortedArrays(int[] nums1, int[] nums2)
+    {
+        List<int> nums = nums1.Concat(nums2).ToList();
+        nums.Sort();
+
+        int midpoint = nums.Count / 2;
+        double median = nums.Count % 2 is 0
+            ? (nums[midpoint] + nums[midpoint - 1]) / 2d
+            :  nums[midpoint];
+
+        return median;
+    }
+    #endregion
+    #region 6. Zigzag Conversion
+    public static string Convert6(string s, int numRows)
+    {
+        if (numRows is 1)
+        {
+            return s;
+        }
+
+        int index = 0;
+        int direction = 1;
+        string[] rows = new string[numRows];
+        for (int i = 0; i < s.Length; i++)
+        {
+            rows[index] += s[i];
+            index += direction;
+            if (index == 0 || index == numRows - 1)
+            {
+                direction *= -1;
+            }
+        }
+        string stringZigzagged = string.Empty;
+        foreach (string a in rows)
+        {
+            stringZigzagged += a;
+        }
+        return stringZigzagged;
+    }
+    #endregion
+    #region 7. Reverse Integer
+    public static int Reverse(int x)
+    {
+        char[] digits = x.ToString()
+            .Reverse()
+            .Where(x => char.IsDigit(x))
+            .ToArray();
+
+        string s = x < 0 ? "-" : string.Empty;
+        foreach (char c in digits)
+        {
+            s += c;
+        }
+
+        int.TryParse(s, out int result);
+        return result;
+    }
+    #endregion
     #region 9. Palidrome
     public bool IsPalindrome(int x)
     {
@@ -57,6 +122,33 @@ public class Solution
             }
         }
         return valid;
+    }
+    #endregion
+    #region 10. Regular Expression Matching
+    //public bool IsMatch(string s, string p)
+    //{
+    //}
+    #endregion
+    #region 11. Container With Most Water
+    public int MaxArea(int[] height)
+    {
+        int i = 0;
+        int j = height.Length - 1;
+
+        int maxVol = 0;
+        while (i != j)
+        {
+            maxVol = Math.Max(Math.Min(height[i], height[j]) * (j - i), maxVol);
+            if (height[i] > height[j])
+            {
+                j--;
+            }
+            else
+            {
+                i++;
+            }
+        }
+        return maxVol;
     }
     #endregion
     #region 13. Roman to Integer
@@ -107,6 +199,52 @@ public class Solution
             prefix = prefix[..^1];
         }
         return prefix;
+    }
+    #endregion
+    #region 
+    public static IList<string> LetterCombinations(string digits)
+    {
+        Dictionary<char, string> valuePairs = new()
+        {
+            {'7', "pqrs"},
+            {'8', "tuv" },
+            {'9', "wxyz"},
+        };
+
+        for (int i = 0; i < 5; i++)
+        {
+            string numpad = string.Empty;
+            numpad += (char)((i * 3) + 0 + 'a');
+            numpad += (char)((i * 3) + 1 + 'a');
+            numpad += (char)((i * 3) + 2 + 'a');
+            valuePairs.Add((char)(i + '2'), numpad);
+        }
+
+        List<string> combinations = new() {""};
+        for (int i = 0; i < digits.Length; i++)
+        {
+            string chars = valuePairs[digits[i]];
+            int newIterations = chars.Length;
+
+            List<string> newCombinations = new(combinations);
+            for (int j = 0; ++j < newIterations;)
+            {
+                combinations.AddRange(newCombinations);
+            }
+
+            int cutoff = combinations.Count / newIterations;
+            for (int j = 0; j < combinations.Count; j++)
+            {
+                combinations[j] += chars[j / cutoff];
+            }
+        }
+
+        if (combinations.Count is 1)
+        {
+            combinations.Clear();
+        }
+
+        return combinations;
     }
     #endregion
     #region 20. Valid Parentheses
@@ -228,6 +366,16 @@ public class Solution
         }
         return index;
     }
+    #endregion
+    #region 50. Pow(x, n)
+    //public double MyPow(double x, int n)
+    //{ 
+
+    //}
+    #endregion
+    #region 58. Length of Last Word
+    public int LengthOfLastWord(string s) => 
+         s.Trim().Split(' ').Last().Length;
     #endregion
     #region 67. Add Binary
     public string AddBinary(string a, string b)
@@ -524,6 +672,30 @@ public class Solution
         return straightLine;
     }
     #endregion
+    #region 1337. The K Weakest Rows in a Matrix
+    public int[] KWeakestRows(int[][] mat, int k)
+    {
+        int rows = mat.Length;
+        int cols = mat[0].Length;
+        List<(int,int soldiers)> allRows = new();
+        for (int i = 0; i < rows; i++)
+        {
+            int totalSoldiers = 0;
+            for (int j = 0; j < cols && mat[i][j] is 1; j++)
+            {
+                totalSoldiers++;
+            }
+            allRows.Add((i,totalSoldiers));
+        }
+        (int index,int)[] weakestRows = allRows.OrderBy(x => x.soldiers).ToArray();
+        int[] indexes = new int[k];
+        for (int i = 0; i < k; i++)
+        {
+            indexes[i] = weakestRows[i].index;
+        }
+        return indexes;
+    }
+    #endregion
     #region 1662. Check If Two String Arrays are Equivalent
     public bool ArrayStringsAreEqual(string[] word1, string[] word2)
     {
@@ -546,6 +718,24 @@ public class Solution
         int col = coordinates[0] % 2;
         int row = coordinates[1] % 2;
         return col + row is 1;
+    }
+    #endregion
+    #region 2824. Count Pairs Whose Sum is Less than Target
+    public int CountPairs(IList<int> nums, int target)
+    {
+        int pairs = 0;
+        int length = nums.Count;
+        for (int i = 0; i < length; i++)
+        {
+            for (int j = i + 1; j < length; j++)
+            {
+                if (nums[i] + nums[j] < target)
+                {
+                    pairs++;
+                }
+            }
+        }
+        return pairs;
     }
     #endregion
 }
