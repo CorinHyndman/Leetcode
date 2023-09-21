@@ -1,10 +1,7 @@
-﻿
+﻿using System.Diagnostics.CodeAnalysis;
 
-
-
-using System.Collections.Immutable;
-
-Solution.LetterCombinations("23");
+int[] ints = { 1, 0, 2, 3, 4 };
+Solution.MaxChunksToSorted(ints);
 
 
 public class Solution
@@ -49,7 +46,7 @@ public class Solution
     }
     #endregion
     #region 4. Median of Two Sorted Arrays
-    public static double FindMedianSortedArrays(int[] nums1, int[] nums2)
+    public double FindMedianSortedArrays(int[] nums1, int[] nums2)
     {
         List<int> nums = nums1.Concat(nums2).ToList();
         nums.Sort();
@@ -63,7 +60,7 @@ public class Solution
     }
     #endregion
     #region 6. Zigzag Conversion
-    public static string Convert6(string s, int numRows)
+    public string Convert6(string s, int numRows)
     {
         if (numRows is 1)
         {
@@ -91,7 +88,7 @@ public class Solution
     }
     #endregion
     #region 7. Reverse Integer
-    public static int Reverse(int x)
+    public int Reverse(int x)
     {
         char[] digits = x.ToString()
             .Reverse()
@@ -201,8 +198,8 @@ public class Solution
         return prefix;
     }
     #endregion
-    #region 
-    public static IList<string> LetterCombinations(string digits)
+    #region 17. Letter Combinations of a Phone Number
+    public IList<string> LetterCombinations(string digits)
     {
         Dictionary<char, string> valuePairs = new()
         {
@@ -428,6 +425,26 @@ public class Solution
         return c;
     }
     #endregion
+    #region 88. Merge Sorted Array
+    public void Merge(int[] nums1, int m, int[] nums2, int n)
+    {
+        for (int i = 0; i < nums2.Length; i++)
+        {
+            for (int j = 0; j < nums1.Length; j++)
+            {
+                if (nums2[i] < nums1[j] || (j >= m + i))
+                {
+                    for (int k = nums1.Length; --k > j;)
+                    {
+                        nums1[k] = nums1[k - 1];
+                    }
+                    nums1[j] = nums2[i];
+                    break;
+                }
+            }
+        }
+    }
+    #endregion
     #region 190. Reverse Bits
     public uint reverseBits(uint n)
     {
@@ -582,7 +599,7 @@ public class Solution
     }
     #endregion
     #region 704. Binary Search
-    public static int Search(int[] nums, int target)
+    public int Search(int[] nums, int target)
     {
         int index = -1;
         int lower = 0;
@@ -620,6 +637,35 @@ public class Solution
             }
         }
         return total;
+    }
+    #endregion
+    #region 769. Max Chunks To Make Sorted
+    public static int MaxChunksToSorted(int[] arr)
+    {
+        List<List<int>> chunks = new();
+        for (int i = 0; i < arr.Length; i++)
+        {
+            chunks.Add(new List<int>() 
+            { 
+                arr[i] 
+            });
+        }
+
+        int count = chunks.Count;
+        for (int i = 0; i < count; i++)
+        {
+            for (int j = chunks.Count; --j > 0;)
+            {
+                if (chunks[j].First() < chunks[j - 1].Last())
+                {
+                    chunks[j - 1].AddRange(chunks[j]);
+                    chunks.RemoveAt(j);
+                    chunks[j - 1].Sort();
+                }
+            }
+        }
+
+        return chunks.Count;
     }
     #endregion
     #region 941. Valid Mountain Array
