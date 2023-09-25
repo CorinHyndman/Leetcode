@@ -1,7 +1,8 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System;
+using System.Diagnostics.CodeAnalysis;
 
-int[] ints = { 1, 0, 2, 3, 4 };
-Solution.MaxChunksToSorted(ints);
+int[] a = new int[] { 0, 0, 1 };
+Solution.Tribonacci(4);
 
 
 public class Solution
@@ -364,12 +365,6 @@ public class Solution
         return index;
     }
     #endregion
-    #region 50. Pow(x, n)
-    //public double MyPow(double x, int n)
-    //{ 
-
-    //}
-    #endregion
     #region 58. Length of Last Word
     public int LengthOfLastWord(string s) => 
          s.Trim().Split(' ').Last().Length;
@@ -410,6 +405,19 @@ public class Solution
         return result;
     }
     #endregion
+    #region 69. Sqrt(x)
+    public int MySqrt(int x)
+    {        
+        for (long i = 1; i < int.MaxValue; i++)
+        {
+            if (i * i > x)
+            {
+                return (int)(i - 1);
+            }
+        }
+        return 0;
+    }
+    #endregion
     #region 70. Climbing Stairs
     public int ClimbStairs(int n)
     {
@@ -443,6 +451,22 @@ public class Solution
                 }
             }
         }
+    }
+    #endregion
+    #region 169. Majority Element
+    public int MajorityElement(int[] nums)
+    {
+        int majority = nums.Length / 2;
+        Array.Sort(nums);
+
+        for (int i = 0; i + majority < nums.Length; i++)
+        {
+            if (nums[i] == nums[i + majority])
+            {
+                return nums[i];
+            }
+        }
+        return 0;
     }
     #endregion
     #region 190. Reverse Bits
@@ -536,6 +560,25 @@ public class Solution
         return total;
     }
     #endregion
+    #region 283. Move Zeroes
+    public void MoveZeroes(int[] nums)
+    {
+        int tmp = 0;
+        int length = nums.Length;
+        for (int i = length; i-- > 0;)
+        {
+            if (nums[i] is 0)
+            {
+                for (int j = i; j + 1 < length; j++)
+                {
+                    tmp = nums[j];
+                    nums[j] = nums[j + 1];
+                    nums[j + 1] = tmp;
+                }
+            }
+        }
+    }
+    #endregion
     #region 326. Power of Three
     public bool IsPowerOfThree(int n)
     {
@@ -550,6 +593,31 @@ public class Solution
         double x = Math.Log(n) / Math.Log(4);
         x = Math.Round(x, 10);
         return (x % 1 is 0);
+    }
+    #endregion
+    #region 392. Is Subsequence
+    public static bool IsSubsequence(string s, string t)
+    {
+        if (s == string.Empty)
+        {
+            return true;
+        }
+        if (t == string.Empty)
+        {
+            return false;
+        }
+
+        for (int i = 0; i < s.Length; i++)
+        {
+            if (s[i] != t[i] && t.Length > s.Length)
+            {
+                t = t.Remove(i,1);
+                i--;
+            }
+        }
+
+        t = t[..s.Length];
+        return t == s;
     }
     #endregion
     #region 409. Longest Palindrome
@@ -598,6 +666,32 @@ public class Solution
         return j;
     }
     #endregion
+    #region 605. Can Place Flowers
+    public static bool CanPlaceFlowers(int[] flowerbed, int n)
+    {
+        int count = 0;
+        bool planted = true;
+        while (planted)
+        {
+            planted = false;
+            for (int i = 0; i < flowerbed.Length; i++)
+            {
+                bool validPlant = true;
+                validPlant = validPlant && (flowerbed[i] is 0);
+                validPlant = validPlant && (i - 1 == -1 || flowerbed[i - 1] is 0);
+                validPlant = validPlant && (i + 1 >= flowerbed.Length || flowerbed[i + 1] is 0);
+
+                if (validPlant)
+                { 
+                    flowerbed[i] = 1;
+                    planted = true;
+                    count++;
+                }
+            }
+        }
+        return count >= n;
+    }
+    #endregion
     #region 704. Binary Search
     public int Search(int[] nums, int target)
     {
@@ -640,7 +734,7 @@ public class Solution
     }
     #endregion
     #region 769. Max Chunks To Make Sorted
-    public static int MaxChunksToSorted(int[] arr)
+    public int MaxChunksToSorted(int[] arr)
     {
         List<List<int>> chunks = new();
         for (int i = 0; i < arr.Length; i++)
@@ -696,6 +790,31 @@ public class Solution
         return address.Replace(".","[.]");
     }
     #endregion
+    #region 1137. N-th Tribonacci Number
+    public static int Tribonacci(int n)
+    {
+        List<int> sequence = new(){ 0,1,1 };
+        for (int i = 2; i < n; i++)
+        {
+            sequence.Add(sequence.Sum());
+            sequence.RemoveAt(0);
+        }
+        return n < 3 ? sequence[n] : sequence.Last();
+    }
+    #endregion
+    #region 1207. Unique Number of Occurrences
+    public bool UniqueOccurrences(int[] arr)
+    {
+        int[] distinctArr = arr.Distinct().ToArray();
+        List<int> counts = new();
+        foreach (int i in distinctArr)
+        {
+            counts.Add(arr.Count(x => x == i));
+        }
+        return counts.Count() == counts.Distinct().Count();
+    }
+
+    #endregion
     #region 1232. Check If It Is a Straight Line
     public bool CheckStraightLine(int[][] coordinates)
     {
@@ -742,6 +861,18 @@ public class Solution
         return indexes;
     }
     #endregion
+    #region 1431. Kids With the Greatest Number of Candies
+    public IList<bool> KidsWithCandies(int[] candies, int extraCandies)
+    {
+        int max = candies.Max();
+        bool[] overMax = new bool[candies.Length];
+        for (int i = 0; i < candies.Length; i++)
+        {
+            overMax[i] = candies[i] + extraCandies >= max;
+        }
+        return overMax;
+    }
+    #endregion
     #region 1662. Check If Two String Arrays are Equivalent
     public bool ArrayStringsAreEqual(string[] word1, string[] word2)
     {
@@ -756,6 +887,21 @@ public class Solution
             b += s;
         }
         return a == b;
+    }
+    #endregion
+    #region 1768. Merge Strings Alternately
+    public string MergeAlternately(string word1, string word2)
+    {
+        int length = Math.Min(word1.Length, word2.Length);
+        string mergedWord = string.Empty;
+        for (int i = 0; i < length; i++)
+        {
+            mergedWord += word1[i];
+            mergedWord += word2[i];
+        }
+        mergedWord += word1[length..];
+        mergedWord += word2[length..];
+        return mergedWord;
     }
     #endregion
     #region 1812. Determine Color of a Chessboard Square
