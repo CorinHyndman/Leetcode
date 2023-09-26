@@ -1,10 +1,4 @@
-﻿using System;
-using System.Diagnostics.CodeAnalysis;
-
-int[] a = new int[] { 0, 0, 1 };
-Solution.Tribonacci(4);
-
-
+﻿Console.WriteLine("Hello World");
 public class Solution
 {
     #region 1. Two Sum
@@ -335,6 +329,44 @@ public class Solution
         return -1;
     }
     #endregion
+    #region 30. Substring with Concatenation of All Words
+    public IList<int> FindSubstring(string s, string[] words)
+    {
+        int wordLength = words[0].Length;
+        int wordsLength = words.Length;
+        int substringLength = wordLength * wordsLength;
+        if (substringLength > s.Length)
+        {
+            return new List<int>();
+        }
+
+        List<int> list = new();
+        string word = string.Join(string.Empty, words);
+        for (int i = 0; i <= s.Length - substringLength; i++)
+        {
+            string currentSubstring = s[i..(i + substringLength)];
+            if (word != currentSubstring)
+            {
+                List<string> remainingWords = words.ToList();
+                int endIndex = currentSubstring.Length - wordLength;
+                for (int j = 0; j <= endIndex; j += wordLength)
+                {
+                    remainingWords.Remove(currentSubstring[j..(j + wordLength)]);
+                }
+
+                if (remainingWords.Count is 0)
+                {
+                    list.Add(i);
+                }
+            }
+            else
+            {
+                list.Add(i);
+            }
+        }
+        return list;
+    }
+    #endregion
     #region 35. Search Insert Position
     public int SearchInsert(int[] nums, int target)
     {
@@ -451,6 +483,33 @@ public class Solution
                 }
             }
         }
+    }
+    #endregion
+    #region 118. Pascal's Triangle
+    public IList<IList<int>> Generate(int numRows)
+    {
+        List<List<int>> triangle = new()
+        {
+            new() { 1 }
+        };
+
+        for (int i = 1; i < numRows; i++)
+        {
+            List<int> currentRow = new();
+            for (int j = 0; j <= i; j++)
+            {
+                int previousLeft = j - 1 >= 0 
+                    ? triangle[i - 1][j - 1] 
+                    : 0;
+
+                int previousCurrent = j < triangle[i - 1].Count
+                    ? triangle[i - 1][j]
+                    : 0;
+                currentRow.Add(previousCurrent + previousLeft);
+            }
+            triangle.Add(currentRow);
+        }
+        return triangle.ToArray();
     }
     #endregion
     #region 169. Majority Element
@@ -595,8 +654,58 @@ public class Solution
         return (x % 1 is 0);
     }
     #endregion
+    #region 345. Reverse Vowels of a String
+    public string ReverseVowels(string s)
+    {
+        char[] vowel = { 'a', 'e', 'i', 'o', 'u' };
+        char[] vowels = s.Where(x => vowel.Contains(x)).Reverse().ToArray();
+
+        int a = 0;
+        int b = s.Length - 1;
+        var chars = s.ToList();
+        while (a != b)
+        {
+            do
+            {
+                a++;
+            } while (!vowels.Contains(chars[a]));
+            
+            do
+            {
+                b--;
+            } while (!vowels.Contains(chars[b]));
+
+            char tmp = chars[a];
+            chars[a] = chars[b];
+            chars[b] = tmp;
+        }
+
+        string d = string.Empty;
+        foreach (char c in chars)
+        {
+            d += c;
+        }
+        return d;
+    }
+    #endregion
+    #region 389. Find the Difference
+    public char FindTheDifference(string s, string t)
+    {
+        var a = s.OrderBy(x => x).ToList();
+        var b = t.OrderBy(x => x).ToList();
+
+        for (int i = 0; i < b.Count - 1; i++)
+        {
+            if (a[i] != b[i])
+            {
+                return b[i];
+            }
+        }
+        return b.Last();
+    }
+    #endregion
     #region 392. Is Subsequence
-    public static bool IsSubsequence(string s, string t)
+    public bool IsSubsequence(string s, string t)
     {
         if (s == string.Empty)
         {
@@ -667,7 +776,7 @@ public class Solution
     }
     #endregion
     #region 605. Can Place Flowers
-    public static bool CanPlaceFlowers(int[] flowerbed, int n)
+    public bool CanPlaceFlowers(int[] flowerbed, int n)
     {
         int count = 0;
         bool planted = true;
@@ -791,7 +900,7 @@ public class Solution
     }
     #endregion
     #region 1137. N-th Tribonacci Number
-    public static int Tribonacci(int n)
+    public int Tribonacci(int n)
     {
         List<int> sequence = new(){ 0,1,1 };
         for (int i = 2; i < n; i++)
