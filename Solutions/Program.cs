@@ -1,4 +1,8 @@
-﻿Console.WriteLine("Hello World");
+﻿using System;
+using System.Reflection.Metadata;
+
+Console.WriteLine("Hello World");
+Solution.SetZeroes(new int[][] { new int[] {0,1,2,0},new int[] { 3,4,5,2},new int[] { 1, 3,1, 5 }});
 public class Solution
 {
     #region 1. Two Sum
@@ -397,6 +401,74 @@ public class Solution
         return index;
     }
     #endregion
+    #region 42. Trapping Rain Water
+    public static int Trap(int[] height)
+    {
+        if (height.Length <= 1)
+        {
+            return 0;
+        }
+
+        int firstIndex = 0;
+        int lastIndex = 0;
+        for (int i = 0; i + 1 < height.Length; i++)
+        {
+            if (height[i + 1] < height[i])
+            {
+                firstIndex = i;
+                break;
+            }
+        }
+        for (int i = height.Length; i-- > 0;)
+        {
+            if (height[i - 1] < height[i])
+            {
+                lastIndex = i;
+                break;
+            }
+        }
+        height = height[firstIndex..(lastIndex + 1)];
+
+        int max = 0;
+        int total = 0;
+        List<int> heights = new(height);
+        int leftIndex = heights.IndexOf(heights.Max());
+        int rightIndex = leftIndex;
+        while (leftIndex > 0)
+        {
+            max = height[..rightIndex].Max();
+
+            leftIndex--;
+            if (height[leftIndex] == max)
+            {
+                rightIndex = leftIndex;
+            }
+            else
+            {
+                total += max - height[leftIndex]; 
+            }
+        }
+
+        max = 0;
+        leftIndex = heights.IndexOf(heights.Max()) + 1;
+        rightIndex = leftIndex + 1;
+        while (rightIndex < height.Length)
+        {
+            max = height[leftIndex..].Max();
+
+            if (height[rightIndex] == max)
+            {
+                leftIndex = rightIndex;
+            }
+            else
+            {
+                total += max - height[rightIndex];
+            }
+            rightIndex++;
+        }
+        return total;
+    }
+    #endregion
     #region 58. Length of Last Word
     public int LengthOfLastWord(string s) => 
          s.Trim().Split(' ').Last().Length;
@@ -463,6 +535,58 @@ public class Solution
             b = c;
         }
         return c;
+    }
+    #endregion
+    #region 73. Set Matrix Zeroes
+    public static void SetZeroes(int[][] matrix)
+    {
+        int row = matrix.Length;
+        int col = matrix[0].Length;
+        List<(int row, int col)> zeros = new();
+        for (int i = 0; i < row; i++)
+        {
+            for (int j = 0; j < col; j++)
+            {
+                if (matrix[i][j] is 0)
+                {
+                    zeros.Add((i,j));
+                }
+            }
+        }
+
+        foreach ((int r, int c) in zeros)
+        {
+            matrix[r] = new int[col]; 
+            for (int i = 0; i < row; i++)
+            {
+                matrix[i][c] = 0;
+            }
+        }
+    }
+    #endregion
+    #region 75. Sort Colors
+    public void SortColors(int[] nums)
+    {
+        int tmp;
+        bool swap;
+        for (int i = 0; i < nums.Length; i++)
+        {
+            swap = false;
+            for (int j = 0; j + 1 < nums.Length; j++)
+            {
+                if (nums[j] > nums[j + 1])
+                {
+                    tmp = nums[j];
+                    nums[j] = nums[j + 1];
+                    nums[j + 1] = tmp;
+                    swap = true;
+                }
+            }
+            if (!swap)
+            {
+                return;
+            }
+        }
     }
     #endregion
     #region 88. Merge Sorted Array
@@ -871,6 +995,56 @@ public class Solution
         return chunks.Count;
     }
     #endregion
+    #region 896. Monotonic Array
+    public  static bool IsMonotonic(int[] nums)
+    {
+        Func<int, int, bool> comparison = nums.Max() > nums[0]
+            ? (i, j) => i <= j  // Increasing
+            : (i, j) => i >= j; // Decreasing
+
+        for (int i = 0; i + 1 < nums.Length; i++)
+        {
+            if (!comparison(nums[i], nums[i + 1]))
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+    #endregion
+    #region 905. Sort Array By Parity
+    public int[] SortArrayByParity(int[] nums)
+    {
+        int left = 0;
+        int right = nums.Length - 1;
+        while (left <= right)
+        {
+            bool leftOdd = nums[left] % 2 is 1;
+            bool rightEven = nums[right] % 2 is 0;
+            if (leftOdd && rightEven)
+            {
+                int tmp = nums[right];
+                nums[right] = nums[left];
+                nums[left] = tmp;
+            }
+
+            if (leftOdd)
+            {
+                right--;
+            }
+            else if (rightEven)
+            {
+                left++;
+            }
+            else
+            {
+                right--;
+                left++;
+            }
+        }
+        return nums;
+    }
+    #endregion
     #region 941. Valid Mountain Array
     public bool ValidMountainArray(int[] arr)
     {
@@ -1021,6 +1195,112 @@ public class Solution
         return col + row is 1;
     }
     #endregion
+    #region 2164. Sort Even and Odd Indices Independently
+    public static int[] SortEvenOdd(int[] nums)
+    {
+        for (int j = 0; j < nums.Length; j++)
+        {
+            bool even = true;
+            for (int i = 0; i + 2 < nums.Length; i++)
+            {
+                int next = i + 2;
+                if (even)
+                {
+                    if (nums[i] > nums[next])
+                    {
+                        int tmp = nums[i];
+                        nums[i] = nums[next];
+                        nums[next] = tmp;
+                    }
+                }
+                else
+                {
+                    if (nums[i] < nums[next])
+                    {
+                        int tmp = nums[i];
+                        nums[i] = nums[next];
+                        nums[next] = tmp;
+                    }
+                }
+                even = !even;
+            }
+        }
+        return nums;
+    }
+    #endregion
+    #region 2771. Longest Non-decreasing Subarray From Two Arrays
+    public static int MaxNonDecreasingLength(int[] nums1, int[] nums2)
+    {
+        int[] nums3 = new int[nums1.Length];        
+        for (int i = 0; i < nums3.Length; i++)
+        {
+            int previous = 0;
+            if (i > 0)
+            {
+                previous = nums3[i - 1];
+            }
+
+            int min = Math.Min(nums1[i], nums2[i]);
+            int max = Math.Max(nums1[i], nums2[i]);
+            if (i is 0 || previous > max)
+            {
+                nums3[i] = min;
+                continue;
+            }
+
+            nums3[i] = min >= previous ? min : max;
+        }
+
+
+        int longest = 1;
+        {
+            int count = 1;
+            for (int i = 0; i < nums3.Length - 1; i++)
+            {
+                if (nums3[i] <= nums3[i + 1])
+                {
+                    count++;
+                }
+                else
+                {
+                    count = 1;
+                }
+                longest = Math.Max(longest, count);
+            }
+        }
+        {
+            int count = 1;
+            for (int i = 0; i < nums2.Length - 1; i++)
+            {
+                if (nums2[i] <= nums2[i + 1])
+                {
+                    count++;
+                }
+                else
+                {
+                    count = 1;
+                }
+                longest = Math.Max(longest, count);
+            }
+        }
+        {
+            int count = 1;
+            for (int i = 0; i < nums1.Length - 1; i++)
+            {
+                if (nums1[i] <= nums1[i + 1])
+                {
+                    count++;
+                }
+                else
+                {
+                    count = 1;
+                }
+                longest = Math.Max(longest, count);
+            }
+        }
+        return longest;
+    }
+    #endregion
     #region 2824. Count Pairs Whose Sum is Less than Target
     public int CountPairs(IList<int> nums, int target)
     {
@@ -1040,6 +1320,8 @@ public class Solution
     }
     #endregion
 }
+
+#region Leetcode Classes
 public class ListNode
 {
     public int val;
@@ -1050,3 +1332,4 @@ public class ListNode
         this.next = next;
     }
  }
+#endregion
