@@ -1,8 +1,9 @@
 ﻿using System;
+using System.Numerics;
 using System.Reflection.Metadata;
 
-Console.WriteLine("Hello World");
-Solution.SetZeroes(new int[][] { new int[] {0,1,2,0},new int[] { 3,4,5,2},new int[] { 1, 3,1, 5 }});
+Console.WriteLine(Solution.RemoveElement(new int[] { 3, 3 },3));
+
 public class Solution
 {
     #region 1. Two Sum
@@ -22,6 +23,38 @@ public class Solution
             }
         }
         return result;
+    }
+    #endregion
+    #region 2. Add Two Numbers
+    public static ListNode AddTwoNumbers(ListNode l1, ListNode l2)
+    {
+        List<int> a = new();
+        List<int> b = new();
+        while (l1 is not null)
+        {
+            a.Add(l1.val);
+            l1 = l1.next;
+        }
+        while (l2 is not null)
+        {
+            b.Add(l2.val);
+            l2 = l2.next;
+        }
+        a.Reverse();
+        b.Reverse();
+
+        BigInteger aTotal = BigInteger.Parse(string.Join("", a.ConvertAll(x => x.ToString())));
+        BigInteger bTotal = BigInteger.Parse(string.Join("", b.ConvertAll(x => x.ToString())));
+        BigInteger total = aTotal + bTotal;
+
+        int[] c = Array.ConvertAll(total.ToString().ToCharArray(), x => x - '0');
+
+        ListNode head = null;
+        for (int i = 0; i < c.Length; i++)
+        {
+            head = new(c[i], head);
+        }
+        return head;
     }
     #endregion
     #region 3. Longest Substring Without Repeating Characters
@@ -53,11 +86,56 @@ public class Solution
         int midpoint = nums.Count / 2;
         double median = nums.Count % 2 is 0
             ? (nums[midpoint] + nums[midpoint - 1]) / 2d
-            :  nums[midpoint];
+            : nums[midpoint];
 
         return median;
     }
     #endregion
+    //#region 5. Longest Palindromic Substring
+    public static string LongestPalindromeSubstring(string s)   ///////////////////
+    {
+        s = $" {s} ";
+        int left, right;
+        string longest = s[1..2];
+        string subString = string.Empty;
+        for (int i = 0; i < s.Length; i++)
+        {
+            int remaining = s.Length - i;
+            for (int j = 1; j < Math.Min(i, remaining); j++)
+            {
+                left = i - j;
+                right = i + j;
+                if (s[left] != s[right])
+                {
+                    subString = s[left..right];
+
+                    if (subString.First() != subString.Last())
+                    {
+                        if (subString.First() == subString[^2])
+                        {
+                            subString = subString[..^1];
+                        }
+                        else
+                        {
+                            subString = subString[1..];
+                        }
+                    }
+                    longest = subString.Length > longest.Length
+                        ? subString
+                        : longest;
+                    break;
+                }
+
+                subString = s[left..(right + 1)];
+                longest = subString.Length > longest.Length
+                    ? subString
+                    : longest;
+
+            }
+        }
+        return longest;
+    }
+    //#endregion
     #region 6. Zigzag Conversion
     public string Convert6(string s, int numRows)
     {
@@ -101,6 +179,49 @@ public class Solution
         }
 
         int.TryParse(s, out int result);
+        return result;
+    }
+    #endregion
+    #region 8. String to Integer (atoi)
+    public static int MyAtoi(string s)
+    {
+        s = s.Trim();
+
+        int sign = 0;
+        int result = 0;
+        for (int i = 0; i < s.Length; i++)
+        {
+            if (i is 0 && (s[i] is '+' or '-'))
+            {
+                sign = s[i] is '-'
+                    ? -1
+                    : 1;
+                continue;
+            }
+            else
+            {
+                if (!char.IsDigit(s[i]))
+                {
+                    break;
+                }
+            }
+
+            if ((result * 10L) + s[i] - '0' > int.MaxValue)
+            {
+                return sign is -1
+                    ? int.MinValue
+                    : int.MaxValue;
+            }
+
+            result *= 10;
+            result += s[i] - '0';
+        }
+
+        if (sign is not 0)
+        {
+            result *= sign;
+        }
+
         return result;
     }
     #endregion
@@ -314,6 +435,27 @@ public class Solution
         return index;
     }
     #endregion
+    #region 27. Remove Element
+    public static int RemoveElement(int[] nums, int val)
+    {
+        int count = nums.Where(x => x == val).Count();
+        int right = nums.Length - 1;
+        for (int i = 0; i < right; i++)
+        {
+            if (nums[i] == val)
+            {
+                while (nums[right] == val && right > 0)
+                {
+                    right--;
+                }
+                nums[i] = nums[right];
+                count++;
+                right--;
+            }
+        }
+        return nums.Length - count;
+    }
+    #endregion
     #region 28. Find the Index of the First Occurrence in a String
     public int StrStr(string haystack, string needle)
     {
@@ -467,6 +609,37 @@ public class Solution
             rightIndex++;
         }
         return total;
+    }
+    #endregion
+    #region 50. Pow(x, n)
+    public static double MyPow(double x, int n)
+    {
+        if (n is 0 || Math.Round(x,8) is 1)
+        {
+            return 1;
+        }
+        if(x is -1)
+        {
+            return n % 2 is 0 ? -1 : 1;
+        }
+
+        double power = Math.Abs(n * 1d);
+        double xStart = x;
+        for (int i = 1; i < power; i++)
+        {
+            x *= xStart;
+            if (double.IsInfinity(x))
+            {
+                return 0;
+            }
+        }
+
+        if (n < 0)
+        {
+            x = 1 / x;
+        }
+
+        return x;
     }
     #endregion
     #region 58. Length of Last Word
@@ -897,6 +1070,41 @@ public class Solution
             j++;
         }
         return j;
+    }
+    #endregion
+    #region 456. 132 Pattern
+    public bool Find132pattern(int[] nums)
+    {
+        if (nums.Length < 3)
+        {
+            return false;
+        }
+
+        for (int i = 0; i < nums.Length; i++)
+        {
+            for (int j = i + 1; j < nums.Length; j++)
+            {
+                for (int k = j + 1; k < nums.Length; k++)
+                {
+                    if (nums[i] < nums[k] && nums[k] < nums[j])
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+    #endregion
+    #region 557. Reverse Words in a String III
+    public string ReverseWords(string s)
+    {
+        string[] words = s.Split(' ');
+        for (int i = 0; i < words.Length; i++)
+        {
+            words[i] = string.Join("", words[i].Reverse());
+        }
+        return string.Join(" ", words);
     }
     #endregion
     #region 605. Can Place Flowers
