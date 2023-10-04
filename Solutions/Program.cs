@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Numerics;
 using System.Reflection.Metadata;
-
-Console.WriteLine(Solution.RemoveElement(new int[] { 3, 3 },3));
-
 public class Solution
 {
     #region 1. Two Sum
@@ -762,6 +759,31 @@ public class Solution
         }
     }
     #endregion
+    #region 83. Remove Duplicates from Sorted List
+    public ListNode DeleteDuplicates(ListNode head)
+    {
+        ListNode current = head;
+        while (current is not null)
+        {
+            current.next = GetNextNonDuplicate(current, current.val);
+            current = current.next;
+        }
+        return head;
+
+        ListNode GetNextNonDuplicate(ListNode node, int val)
+        {
+            if (node.val == val)
+            {
+                if (node.next is not null)
+                {
+                    return GetNextNonDuplicate(node.next, val);
+                }
+                return null;
+            }
+            return node;
+        }
+    }
+    #endregion
     #region 88. Merge Sorted Array
     public void Merge(int[] nums1, int m, int[] nums2, int n)
     {
@@ -825,6 +847,19 @@ public class Solution
         return 0;
     }
     #endregion
+    #region 171. Excel Sheet Column Number
+    public int TitleToNumber(string columnTitle)
+    {
+        int total = 0;
+        int power = columnTitle.Length - 1;
+        foreach (char c in columnTitle)
+        {
+            total += (c - 'A' + 1) * (int)Math.Pow(26, power);
+            power--;
+        }
+        return total;
+    }
+    #endregion
     #region 190. Reverse Bits
     public uint reverseBits(uint n)
     {
@@ -858,6 +893,31 @@ public class Solution
             }
         }
         return numOnes;
+    }
+    #endregion
+    #region 205. Isomorphic Strings
+    public static bool IsIsomorphic(string s, string t)
+    {
+        Dictionary<char, char> newMapping = new();
+        for (int i = 0; i < s.Length; i++)
+        {
+            if (newMapping.ContainsKey(s[i]))
+            {
+                if (newMapping[s[i]] != t[i])
+                {
+                    return false;
+                }
+            }
+            else if (newMapping.ContainsValue(t[i]))
+            {
+                return false;
+            }
+            else
+            {
+                newMapping.Add(s[i], t[i]);
+            }
+        }
+        return true;
     }
     #endregion
     #region 206. Reverse Linked List
@@ -897,6 +957,43 @@ public class Solution
         Array.Sort(sChars);
         Array.Sort(tChars);
         return sChars.SequenceEqual(tChars);
+    }
+    #endregion
+    #region 257. Binary Tree Paths
+    public IList<string> BinaryTreePaths(TreeNode root)
+    {
+        List<List<int>> allPaths = new();
+        Stack<int> currentPath = new();
+
+        GetPaths(root);
+
+        List<string> paths = new();
+        foreach (var list in allPaths)
+        {
+            paths.Add(string.Join("->", list));
+        }
+        return paths;
+
+        void GetPaths(TreeNode node)
+        {
+            currentPath.Push(node.val);
+            if (node.left is null && node.right is null)
+            {
+                allPaths.Add(currentPath.Reverse().ToList());
+                currentPath.Pop();
+                return;
+            }
+
+            if (node.right is not null)
+            {
+                GetPaths(node.right);
+            }
+            if (node.left is not null)
+            {
+                GetPaths(node.left);
+            }
+            currentPath.Pop();
+        }
     }
     #endregion
     #region 258. Add Digits
@@ -1364,6 +1461,23 @@ public class Solution
         return overMax;
     }
     #endregion
+    #region 1512. Number of Good Pairs
+    public int NumIdenticalPairs(int[] nums)
+    {
+        int count = 0;
+        for (int i = 0; i < nums.Length - 1; i++)
+        {
+            for (int j = i + 1; j < nums.Length; j++)
+            {
+                if (nums[i] == nums[j])
+                {
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
+    #endregion
     #region 1662. Check If Two String Arrays are Equivalent
     public bool ArrayStringsAreEqual(string[] word1, string[] word2)
     {
@@ -1540,4 +1654,16 @@ public class ListNode
         this.next = next;
     }
  }
+public class TreeNode
+{
+    public int val;
+    public TreeNode left;
+    public TreeNode right;
+    public TreeNode(int val = 0, TreeNode left = null, TreeNode right = null)
+    {
+        this.val = val;
+        this.left = left;
+        this.right = right;
+    }
+}
 #endregion
