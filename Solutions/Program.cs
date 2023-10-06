@@ -510,36 +510,6 @@ public class Solution
         return list;
     }
     #endregion
-    #region 35. Search Insert Position
-    public int SearchInsert(int[] nums, int target)
-    {
-        int index = 0;
-        int lowerBound = 0;
-        int upperBound = nums.Length;
-        bool searching = true;
-        while (searching)
-        {
-            index = (upperBound + lowerBound + 1) / 2;
-            if (index is not 0 && nums[index - 1] < target && target < nums[index])
-            {
-                searching = false;
-            }
-            else if (nums[index] < target)
-            {
-                lowerBound = index;
-            }
-            else if (nums[index] > target)
-            {
-                upperBound = index;
-            }
-            else
-            {
-                searching = false;
-            }
-        }
-        return index;
-    }
-    #endregion
     #region 42. Trapping Rain Water
     public static int Trap(int[] height)
     {
@@ -642,7 +612,7 @@ public class Solution
     #region 58. Length of Last Word
     public int LengthOfLastWord(string s) => 
          s.Trim().Split(' ').Last().Length;
-    #endregion
+    #endregion    
     #region 67. Add Binary
     public string AddBinary(string a, string b)
     {
@@ -804,6 +774,21 @@ public class Solution
         }
     }
     #endregion
+    #region 104. Maximum Depth of Binary Tree
+    public int MaxDepth(TreeNode root)
+    {
+        return GetMaxDepth(root, 1);
+
+        int GetMaxDepth(TreeNode node, int depth)
+        {
+            if (node is null)
+            {
+                return depth - 1;
+            }
+            return Math.Max(GetMaxDepth(node.left, depth + 1), GetMaxDepth(node.right, depth + 1));
+        }
+    }
+    #endregion
     #region 118. Pascal's Triangle
     public IList<IList<int>> Generate(int numRows)
     {
@@ -939,6 +924,21 @@ public class Solution
             previous = current;
         }
         return current;
+    }
+    #endregion
+    #region 229. Majority Element II
+    public IList<int> MajorityElementII(int[] nums)
+    {
+        List<int> values = new();
+        int[] distinctNums = nums.Distinct().ToArray();
+        foreach (int i in distinctNums)
+        {
+            if (nums.Where(x => x == i).Count() > nums.Length / 3)
+            {
+                values.Add(i);
+            }
+        }
+        return values;
     }
     #endregion
     #region 231. Power Of 2
