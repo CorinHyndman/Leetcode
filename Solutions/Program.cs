@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Numerics;
-using System.Reflection.Metadata;
+Solution.PlusOne(new int[] {1,2,3 });
 public class Solution
 {
     #region 1. Two Sum
@@ -510,6 +510,18 @@ public class Solution
         return list;
     }
     #endregion
+    #region 35. Search Insert Position
+    public int SearchInsert(int[] nums, int target)
+    {
+        var numList = nums.ToList();
+        int index = numList.IndexOf(target);
+        if (index is -1)
+        {
+            return numList.Where(x => x < target).Count();
+        }
+        return index;
+    }
+    #endregion
     #region 42. Trapping Rain Water
     public static int Trap(int[] height)
     {
@@ -612,7 +624,25 @@ public class Solution
     #region 58. Length of Last Word
     public int LengthOfLastWord(string s) => 
          s.Trim().Split(' ').Last().Length;
-    #endregion    
+    #endregion
+    #region 66. Plus One
+    public static int[] PlusOne(int[] digits)
+    {
+        int index = digits.Length - 1;
+        while (++digits[index] is 10)
+        {
+            digits[index] = 0;
+            index--;
+
+            if (index < 0)
+            {
+                int[] one = { 1 };
+                return one.Concat(digits).ToArray();
+            }
+        }
+        return digits;
+    }
+    #endregion
     #region 67. Add Binary
     public string AddBinary(string a, string b)
     {
