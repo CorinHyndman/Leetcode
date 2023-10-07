@@ -1,5 +1,9 @@
 ﻿using System;
+using System.Diagnostics.Metrics;
 using System.Numerics;
+using System.Security;
+using System.Security.AccessControl;
+
 Solution.PlusOne(new int[] {1,2,3 });
 public class Solution
 {
@@ -435,7 +439,7 @@ public class Solution
     #region 27. Remove Element
     public static int RemoveElement(int[] nums, int val)
     {
-        int count = nums.Where(x => x == val).Count();
+        int count = nums.Count(x => x == val);
         int right = nums.Length - 1;
         for (int i = 0; i < right; i++)
         {
@@ -517,7 +521,7 @@ public class Solution
         int index = numList.IndexOf(target);
         if (index is -1)
         {
-            return numList.Where(x => x < target).Count();
+            return numList.Count(x => x < target);
         }
         return index;
     }
@@ -963,7 +967,7 @@ public class Solution
         int[] distinctNums = nums.Distinct().ToArray();
         foreach (int i in distinctNums)
         {
-            if (nums.Where(x => x == i).Count() > nums.Length / 3)
+            if (nums.Count(x => x == i) > nums.Length / 3)
             {
                 values.Add(i);
             }
@@ -1163,7 +1167,7 @@ public class Solution
         int largestOdd = 0;
         for (int i = 0; i < c.Length;)
         {
-            int charCount = c.Where(x => x == c[i]).Count();
+            int charCount = c.Count(x => x == c[i]);
             if (charCount % 2 is 1)
             {
                 if (charCount > largestOdd)
@@ -1455,6 +1459,20 @@ public class Solution
         return straightLine;
     }
     #endregion
+    #region 1281. Subtract the Product and Sum of Digits of an Integer
+    public int SubtractProductAndSum(int n)
+    {
+        int sum = 0;
+        int product = 1;
+        string nString = n.ToString();
+        foreach (char c in nString)
+        {
+            sum += c - '0';
+            product *= c - '0';
+        }
+        return product - sum;
+    }
+    #endregion
     #region 1337. The K Weakest Rows in a Matrix
     public int[] KWeakestRows(int[][] mat, int k)
     {
@@ -1479,6 +1497,17 @@ public class Solution
         return indexes;
     }
     #endregion
+    #region 1365. How Many Numbers Are Smaller Than the Current Number
+    public int[] SmallerNumbersThanCurrent(int[] nums)
+    {
+        int[] numCount = new int[nums.Length];
+        for (int i = 0; i < nums.Length; i++)
+        {
+            numCount[i] = nums.Count(x => x < nums[i]);
+        }
+        return numCount;
+    }
+    #endregion
     #region 1431. Kids With the Greatest Number of Candies
     public IList<bool> KidsWithCandies(int[] candies, int extraCandies)
     {
@@ -1489,6 +1518,29 @@ public class Solution
             overMax[i] = candies[i] + extraCandies >= max;
         }
         return overMax;
+    }
+    #endregion
+    #region 1470. Shuffle the Array
+    public int[] Shuffle(int[] nums, int n)
+    {
+        var numsShuffled = new int[nums.Length];
+        int j = 0;
+        for (int i = 0; i < n; i++)
+        {
+            numsShuffled[(i * 2)] = nums[i];
+            numsShuffled[(i * 2) + 1] = nums[n + i];
+        }
+        return numsShuffled;
+    }
+    #endregion
+    #region 1480. Running Sum of 1d Array
+    public int[] RunningSum(int[] nums)
+    {
+        for (int i = 1; i < nums.Length; i++)
+        {
+            nums[i] = nums[i - 1] + nums[i];
+        }
+        return nums;
     }
     #endregion
     #region 1512. Number of Good Pairs
@@ -1523,6 +1575,27 @@ public class Solution
         }
         return a == b;
     }
+    #endregion    
+    #region 1678. Goal Parser Interpretation
+    public string Interpret(string command)
+    {
+        command = command.Replace("()", "o");
+        command = command.Replace("(", "");
+        command = command.Replace(")", "");
+        return command;
+    }
+    #endregion
+    #region 1720. Decode XORed Array
+    public int[] Decode(int[] encoded, int first)
+    {
+        int[] decoded = new int[encoded.Length + 1];
+        decoded[0] = first;
+        for (int i = 1; i < decoded.Length; i++)
+        {
+            decoded[i] = decoded[i - 1] ^ encoded[i - 1];
+        }
+        return decoded;
+    }
     #endregion
     #region 1768. Merge Strings Alternately
     public string MergeAlternately(string word1, string word2)
@@ -1545,6 +1618,41 @@ public class Solution
         int col = coordinates[0] % 2;
         int row = coordinates[1] % 2;
         return col + row is 1;
+    }
+    #endregion
+    #region 1920. Build Array from Permutation
+    public int[] BuildArray(int[] nums)
+    {
+        var numsPermutation = new int[nums.Length];
+        for (int i = 0; i < nums.Length; i++)
+        {
+            numsPermutation[i] = nums[nums[i]];
+        }
+        return numsPermutation;
+    }
+    #endregion
+    #region 2011. Final Value of Variable After Performing Operations
+    public int FinalValueAfterOperations(string[] operations)
+    {
+        int num = 0;
+        for (int i = 0; i < operations.Length; i++)
+        {
+            if (operations[i][1] is '+')
+            {
+                num++;
+            }
+            else
+            {
+                num--;
+            }
+        }
+        return num;
+    }
+    #endregion
+    #region 2114. Maximum Number of Words Found in Sentences
+    public int MostWordsFound(string[] sentences)
+    {
+        return sentences.Max(x => x.Count(c => c is ' '));
     }
     #endregion
     #region 2164. Sort Even and Odd Indices Independently
@@ -1578,6 +1686,18 @@ public class Solution
             }
         }
         return nums;
+    }
+    #endregion
+    #region 2469. Convert the Temperature
+    public double[] ConvertTemperature(double celsius)
+    {
+        return new double[]{ celsius + 273.15, celsius * 1.80 + 32.00 };
+    }
+    #endregion
+    #region 2769. Find the Maximum Achievable Number
+    public int TheMaximumAchievableX(int num, int t)
+    {
+        return num + (t * 2);
     }
     #endregion
     #region 2771. Longest Non-decreasing Subarray From Two Arrays
@@ -1669,6 +1789,22 @@ public class Solution
             }
         }
         return pairs;
+    }
+    #endregion
+    #region 2859. Sum of Values at Indices With K Set Bits
+    public int SumIndicesWithKSetBits(IList<int> nums, int k)
+    {
+        int sum = 0;
+        string binary = string.Empty;
+        for (int i = 0; i < nums.Count; i++)
+        {
+            binary = Convert.ToString(i, 2);
+            if (binary.Count(x => x is '1') == k)
+            {
+                sum += nums[i];
+            }
+        }
+        return sum;
     }
     #endregion
 }
