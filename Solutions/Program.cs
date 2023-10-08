@@ -4,7 +4,6 @@ using System.Numerics;
 using System.Security;
 using System.Security.AccessControl;
 
-Solution.PlusOne(new int[] {1,2,3 });
 public class Solution
 {
     #region 1. Two Sum
@@ -27,7 +26,7 @@ public class Solution
     }
     #endregion
     #region 2. Add Two Numbers
-    public static ListNode AddTwoNumbers(ListNode l1, ListNode l2)
+    public ListNode AddTwoNumbers(ListNode l1, ListNode l2)
     {
         List<int> a = new();
         List<int> b = new();
@@ -93,7 +92,7 @@ public class Solution
     }
     #endregion
     //#region 5. Longest Palindromic Substring
-    public static string LongestPalindromeSubstring(string s)   ///////////////////
+    public string LongestPalindromeSubstring(string s)   ///////////////////
     {
         s = $" {s} ";
         int left, right;
@@ -184,7 +183,7 @@ public class Solution
     }
     #endregion
     #region 8. String to Integer (atoi)
-    public static int MyAtoi(string s)
+    public int MyAtoi(string s)
     {
         s = s.Trim();
 
@@ -437,7 +436,7 @@ public class Solution
     }
     #endregion
     #region 27. Remove Element
-    public static int RemoveElement(int[] nums, int val)
+    public int RemoveElement(int[] nums, int val)
     {
         int count = nums.Count(x => x == val);
         int right = nums.Length - 1;
@@ -527,7 +526,7 @@ public class Solution
     }
     #endregion
     #region 42. Trapping Rain Water
-    public static int Trap(int[] height)
+    public int Trap(int[] height)
     {
         if (height.Length <= 1)
         {
@@ -595,7 +594,7 @@ public class Solution
     }
     #endregion
     #region 50. Pow(x, n)
-    public static double MyPow(double x, int n)
+    public double MyPow(double x, int n)
     {
         if (n is 0 || Math.Round(x,8) is 1)
         {
@@ -630,7 +629,7 @@ public class Solution
          s.Trim().Split(' ').Last().Length;
     #endregion
     #region 66. Plus One
-    public static int[] PlusOne(int[] digits)
+    public int[] PlusOne(int[] digits)
     {
         int index = digits.Length - 1;
         while (++digits[index] is 10)
@@ -712,7 +711,7 @@ public class Solution
     }
     #endregion
     #region 73. Set Matrix Zeroes
-    public static void SetZeroes(int[][] matrix)
+    public void SetZeroes(int[][] matrix)
     {
         int row = matrix.Length;
         int col = matrix[0].Length;
@@ -915,7 +914,7 @@ public class Solution
     }
     #endregion
     #region 205. Isomorphic Strings
-    public static bool IsIsomorphic(string s, string t)
+    public bool IsIsomorphic(string s, string t)
     {
         Dictionary<char, char> newMapping = new();
         for (int i = 0; i < s.Length; i++)
@@ -1335,7 +1334,7 @@ public class Solution
     }
     #endregion
     #region 896. Monotonic Array
-    public  static bool IsMonotonic(int[] nums)
+    public bool IsMonotonic(int[] nums)
     {
         Func<int, int, bool> comparison = nums.Max() > nums[0]
             ? (i, j) => i <= j  // Increasing
@@ -1560,6 +1559,58 @@ public class Solution
         return count;
     }
     #endregion
+    #region 1534. Count Good Triplets
+    public int CountGoodTriplets(int[] arr, int a, int b, int c)
+    {
+        int count = 0;
+        for (int i = 0; i + 2 < arr.Length; i++)
+        {
+            for (int j = i + 1; j + 1 < arr.Length; j++)
+            {
+                if (Math.Abs(arr[i] - arr[j]) > a)
+                {
+                    continue;
+                }
+                for (int k = j + 1; k < arr.Length; k++)
+                {
+                    if (Math.Abs(arr[j] - arr[k]) > b)
+                    {
+                        continue;
+                    }
+                    if (Math.Abs(arr[i] - arr[k]) > c)
+                    {
+                        continue;
+                    }
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
+    #endregion
+    #region 1630. Arithmetic Subarrays
+    public IList<bool> CheckArithmeticSubarrays(int[] nums, int[] l, int[] r)
+    {
+        int difference = 0;
+        int[] subNums = null;
+        bool[] validArithmetic = new bool[l.Length];
+        Array.Fill(validArithmetic, true);
+        for (int i = 0; i < l.Length; i++)
+        {
+            subNums = nums[l[i]..(r[i] + 1)];
+            Array.Sort(subNums);
+            difference = Math.Abs(subNums[1] - subNums[0]);
+            for (int j = 1; j + 1 < subNums.Length; j++)
+            {
+                if (Math.Abs(subNums[j + 1] - subNums[j]) != difference)
+                {
+                    validArithmetic[i] = false;
+                }
+            }           
+        }
+        return validArithmetic;
+    }
+    #endregion
     #region 1662. Check If Two String Arrays are Equivalent
     public bool ArrayStringsAreEqual(string[] word1, string[] word2)
     {
@@ -1620,6 +1671,20 @@ public class Solution
         return col + row is 1;
     }
     #endregion
+    #region 1844. Replace All Digits with Characters
+    public string ReplaceDigits(string s)
+    {
+        char[] chars = s.ToCharArray();
+        for (int i = 0; i < chars.Length; i++)
+        {
+            if (char.IsDigit(chars[i]))
+            {
+                chars[i] = (char)(chars[i - 1] + (chars[i] - '0'));
+            }
+        }
+        return new string(chars);
+    }
+    #endregion
     #region 1920. Build Array from Permutation
     public int[] BuildArray(int[] nums)
     {
@@ -1649,6 +1714,23 @@ public class Solution
         return num;
     }
     #endregion
+    #region 2103. Rings and Rods
+    public int CountPoints(string rings)
+    {
+        string ringInfo = string.Empty;
+        string[] rods = new string[10];
+        for (int i = 0; i < rings.Length; i += 2)
+        {
+            ringInfo = rings[i..(i + 2)];
+            rods[ringInfo[1] - '0'] += ringInfo[0];
+        }
+        return rods.Count(x => x is not null && x.Length > 2 &&
+        x.Contains('R') &&
+        x.Contains('B') && 
+        x.Contains('G'));
+
+    }
+    #endregion
     #region 2114. Maximum Number of Words Found in Sentences
     public int MostWordsFound(string[] sentences)
     {
@@ -1656,7 +1738,7 @@ public class Solution
     }
     #endregion
     #region 2164. Sort Even and Odd Indices Independently
-    public static int[] SortEvenOdd(int[] nums)
+    public int[] SortEvenOdd(int[] nums)
     {
         for (int j = 0; j < nums.Length; j++)
         {
@@ -1694,6 +1776,19 @@ public class Solution
         return new double[]{ celsius + 273.15, celsius * 1.80 + 32.00 };
     }
     #endregion
+    #region 2574. Left and Right Sum Differences
+    public int[] LeftRightDifference(int[] nums)
+    {
+        int[] leftNums = new int[nums.Length];
+        int[] rightNums = new int[nums.Length];
+        for (int i = 0; i < nums.Length;)
+        {
+            leftNums[i] = nums[..i].Sum();
+            rightNums[i] = nums[++i..].Sum();
+        }
+        return leftNums.Zip(rightNums, (x, y) => Math.Abs(x - y)).ToArray();
+    }
+    #endregion
     #region 2769. Find the Maximum Achievable Number
     public int TheMaximumAchievableX(int num, int t)
     {
@@ -1701,7 +1796,7 @@ public class Solution
     }
     #endregion
     #region 2771. Longest Non-decreasing Subarray From Two Arrays
-    public static int MaxNonDecreasingLength(int[] nums1, int[] nums2)
+    public int MaxNonDecreasingLength(int[] nums1, int[] nums2)
     {
         int[] nums3 = new int[nums1.Length];        
         for (int i = 0; i < nums3.Length; i++)
