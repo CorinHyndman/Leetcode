@@ -1,8 +1,4 @@
-﻿using System;
-using System.Diagnostics.Metrics;
-using System.Numerics;
-using System.Security;
-using System.Security.AccessControl;
+﻿using System.Numerics;
 
 public class Solution
 {
@@ -511,6 +507,50 @@ public class Solution
             }
         }
         return list;
+    }
+    #endregion
+    #region 34. Find First and Last Position of Element in Sorted Array
+    public int[] SearchRange(int[] nums, int target)
+    {
+        if (!nums.Contains(target))
+        {
+            return new int[] { -1, -1 };
+        }
+
+        int left = 0;
+        int right = nums.Length;
+        int middle = 0;
+        bool found = false;
+        while (!found)
+        {
+            middle = (left + right) / 2;
+            if (nums[middle] == target)
+            {
+                found = true;
+            }
+            else if (nums[middle] < target)
+            {
+                left = middle + 1;
+            }
+            else
+            {
+                right = middle - 1;
+            }
+        }
+        for (int i = middle; i - 1 >= 0; i--)
+        {
+            if (nums[i - 1] == target)
+            {
+                middle = i - 1;
+            }
+            else
+            {
+                i = 0;
+            }
+        }
+
+        int length = nums.Count(x => x == target) - 1;
+        return new int[] { middle, middle + length };
     }
     #endregion
     #region 35. Search Insert Position
@@ -1237,6 +1277,18 @@ public class Solution
         return string.Join(" ", words);
     }
     #endregion
+    #region 561. Array Partition
+    public int ArrayPairSum(int[] nums)
+    {
+        Array.Sort(nums);
+        int total = 0;
+        for (int i = nums.Length - 2; i > 0; i -= 2)
+        {
+            total += nums[i];
+        }
+        return total;
+    }
+    #endregion
     #region 605. Can Place Flowers
     public bool CanPlaceFlowers(int[] flowerbed, int n)
     {
@@ -1290,18 +1342,34 @@ public class Solution
         return index;
     }
     #endregion
-    #region 771. Jewels and Stones
-    public int NumJewelsInStones(string jewels, string stones)
+    #region 728. Self Dividing Numbers
+    public IList<int> SelfDividingNumbers(int left, int right)
     {
-        int total = 0;
-        foreach (char c in stones)
+        bool valid;
+        string numString;
+        List<int> nums = new();
+        for (int i = left; i <= right; i++)
         {
-            if (jewels.Contains(c))
+            numString = i.ToString();
+            if (numString.Contains('0'))
             {
-                total++;
+                continue;
+            }
+
+            valid = true;
+            foreach (char c in i.ToString())
+            {
+                if (i % (c - '0') != 0)
+                {
+                    valid = false;
+                }
+            }
+            if (valid)
+            {
+                nums.Add(i);
             }
         }
-        return total;
+        return nums;    
     }
     #endregion
     #region 769. Max Chunks To Make Sorted
@@ -1310,9 +1378,9 @@ public class Solution
         List<List<int>> chunks = new();
         for (int i = 0; i < arr.Length; i++)
         {
-            chunks.Add(new List<int>() 
-            { 
-                arr[i] 
+            chunks.Add(new List<int>()
+            {
+                arr[i]
             });
         }
 
@@ -1331,6 +1399,20 @@ public class Solution
         }
 
         return chunks.Count;
+    }
+    #endregion
+    #region 771. Jewels and Stones
+    public int NumJewelsInStones(string jewels, string stones)
+    {
+        int total = 0;
+        foreach (char c in stones)
+        {
+            if (jewels.Contains(c))
+            {
+                total++;
+            }
+        }
+        return total;
     }
     #endregion
     #region 896. Monotonic Array
@@ -1737,6 +1819,12 @@ public class Solution
         return sentences.Max(x => x.Count(c => c is ' '));
     }
     #endregion
+    #region 2119. A Number After a Double Reversal
+    public bool IsSameAfterReversals(int num)
+    {
+        return num is 0 || num / 10 != num / 10d;        
+    }
+    #endregion
     #region 2164. Sort Even and Odd Indices Independently
     public int[] SortEvenOdd(int[] nums)
     {
@@ -1770,6 +1858,27 @@ public class Solution
         return nums;
     }
     #endregion
+    #region 2215. Find the Difference of Two Arrays
+    public IList<IList<int>> FindDifference(int[] nums1, int[] nums2)
+    {
+        return new List<int>[] { nums1.Except(nums2).ToList(), nums2.Except(nums1).ToList() };
+    }
+    #endregion
+    #region 2427. Number of Common Factors
+    public int CommonFactors(int a, int b)
+    {
+        int factors = 0;
+        int maxFactor = Math.Min(a, b);
+        for (int i = 1; i <= maxFactor; i++)
+        {
+            if (a % i is 0 && b % i is 0)
+            {
+                factors++;
+            }
+        }
+        return factors;
+    }
+    #endregion
     #region 2469. Convert the Temperature
     public double[] ConvertTemperature(double celsius)
     {
@@ -1787,6 +1896,12 @@ public class Solution
             rightNums[i] = nums[++i..].Sum();
         }
         return leftNums.Zip(rightNums, (x, y) => Math.Abs(x - y)).ToArray();
+    }
+    #endregion
+    #region 2710. Remove Trailing Zeros From a String
+    public string RemoveTrailingZeros(string num)
+    {
+        return num.Replace('0', ' ').TrimEnd().Replace(' ', '0');
     }
     #endregion
     #region 2769. Find the Maximum Achievable Number
