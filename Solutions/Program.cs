@@ -87,51 +87,6 @@ public class Solution
         return median;
     }
     #endregion
-    //#region 5. Longest Palindromic Substring
-    public string LongestPalindromeSubstring(string s)   ///////////////////
-    {
-        s = $" {s} ";
-        int left, right;
-        string longest = s[1..2];
-        string subString = string.Empty;
-        for (int i = 0; i < s.Length; i++)
-        {
-            int remaining = s.Length - i;
-            for (int j = 1; j < Math.Min(i, remaining); j++)
-            {
-                left = i - j;
-                right = i + j;
-                if (s[left] != s[right])
-                {
-                    subString = s[left..right];
-
-                    if (subString.First() != subString.Last())
-                    {
-                        if (subString.First() == subString[^2])
-                        {
-                            subString = subString[..^1];
-                        }
-                        else
-                        {
-                            subString = subString[1..];
-                        }
-                    }
-                    longest = subString.Length > longest.Length
-                        ? subString
-                        : longest;
-                    break;
-                }
-
-                subString = s[left..(right + 1)];
-                longest = subString.Length > longest.Length
-                    ? subString
-                    : longest;
-
-            }
-        }
-        return longest;
-    }
-    //#endregion
     #region 6. Zigzag Conversion
     public string Convert6(string s, int numRows)
     {
