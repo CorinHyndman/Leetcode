@@ -1,5 +1,12 @@
-﻿using System.Numerics;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Numerics;
 
+
+
+int[] a = new int[]{ 3, 5, 5, 2, 5, 5, 6, 6, 4, 4, 1, 1, 2, 5, 5, 6, 6, 4, 1, 3 };
+Solution.GuessNumber(2126753390);
+Console.WriteLine(  );
 public class Solution
 {
     #region 1. Two Sum
@@ -288,7 +295,7 @@ public class Solution
             valuePairs.Add((char)(i + '2'), numpad);
         }
 
-        List<string> combinations = new() {""};
+        List<string> combinations = new() { "" };
         for (int i = 0; i < digits.Length; i++)
         {
             string chars = valuePairs[digits[i]];
@@ -520,6 +527,157 @@ public class Solution
         return index;
     }
     #endregion
+    #region 37. Sudoku Solver
+    public static void SolveSudoku(char[][] board)
+    {
+        var b = new char[][]{
+new char[]{'5', '1', '9', '7', '4', '8', '6', '3', '2'},
+new char[]{'7', '8', '3', '6', '5', '2', '4', '1', '9'},
+new char[]{'4', '2', '6', '1', '3', '9', '8', '7', '5'},
+new char[]{'3', '5', '7', '9', '8', '6', '2', '4', '1'},
+new char[]{'2', '6', '4', '3', '1', '7', '5', '9', '8'},
+new char[]{'1', '9', '8', '5', '2', '4', '3', '6', '7'},
+new char[]{'9', '7', '5', '8', '6', '3', '1', '2', '4'},
+new char[]{'8', '3', '2', '4', '9', '1', '7', '5', '6'},
+new char[]{'6', '4', '1', '2', '7', '5', '9', '8', '3'}};
+
+
+
+        int sudokuSize = 9;
+        List<int>[][] allPossibleNumbers = new List<int>[sudokuSize][];
+        for (int i = 0; i < sudokuSize; i++)
+        {
+            allPossibleNumbers[i] = new List<int>[sudokuSize];
+            for (int j = 0; j < sudokuSize; j++)
+            {
+                allPossibleNumbers[i][j] = board[i][j] is '.'
+                    ? Enumerable.Range(1, 9).ToList()
+                    : new List<int>() { board[i][j] - '0' };
+            }
+        }
+
+        // Complete most of board
+        DoRepeats(allPossibleNumbers);
+
+        //Brute force
+        for (int i = 0; i < sudokuSize; i++)
+        {
+            for (int j = 0; j < sudokuSize; j++)
+            {
+                for(int k = 0; k < allPossibleNumbers[i][j].Count; k++)
+                {
+                    var clone = allPossibleNumbers.ToArray();
+                    clone[i][j] = new List<int>() { allPossibleNumbers[i][j][k] };
+
+                    var permutation = DoRepeats(clone);
+                    while(permutation.Any(x => x.Any(y => y.Count != 1)))
+                    {
+                        allPossibleNumbers = permutation;
+
+                        Console.Clear();
+                        for (int a = 0; a < 9;a++)
+                        {
+                            for (int c = 0; c < 9; c++)
+                            {
+                                Console.ForegroundColor = (allPossibleNumbers[a][c].Count > 0 && b[a][c] == allPossibleNumbers[a][c][0] + '0') ? ConsoleColor.Green : ConsoleColor.Red;
+                                Console.Write(allPossibleNumbers[a][c].Count != 1 ? "  " : allPossibleNumbers[a][c].First() + " ");
+                            }
+                            Console.WriteLine();
+                        }
+                        Console.WriteLine();
+                        for (int a = 0; a < 9; a++)
+                        {
+                            for (int c = 0; c < 9; c++)
+                            {
+                                Console.Write(b[a][c] + " ");
+                            }
+                            Console.WriteLine();
+                        }
+                        return;
+                    }
+                }
+            }
+        }
+
+        List<int>[][] DoRepeats(List<int>[][] sudokuBoard)
+        {
+            for (int repeats = 0; repeats < sudokuSize; repeats++)
+            {
+                // ROWS
+                for (int row = 0; row < sudokuSize; row++)
+                {
+                    List<int> valuesRowToBeRemoved = new();
+                    for (int col = 0; col < sudokuSize; col++)
+                    {
+                        if (sudokuBoard[row][col].Count is 1)
+                        {
+                            valuesRowToBeRemoved.Add(sudokuBoard[row][col].First());
+                        }
+                    }
+
+                    for (int col = 0; col < sudokuSize; col++)
+                    {
+                        if (sudokuBoard[row][col].Count > 1)
+                        {
+                            sudokuBoard[row][col] = sudokuBoard[row][col].Except(valuesRowToBeRemoved).ToList();
+                        }
+                    }
+                }
+
+                // COLUMNS 
+                for (int col = 0; col < sudokuSize; col++)
+                {
+                    List<int> valuesColToBeRemoved = new();
+                    for (int row = 0; row < sudokuSize; row++)
+                    {
+                        if (sudokuBoard[row][col].Count is 1)
+                        {
+                            valuesColToBeRemoved.Add(sudokuBoard[row][col].First());
+                        }
+                    }
+
+                    for (int row = 0; row < sudokuSize; row++)
+                    {
+                        if (sudokuBoard[row][col].Count > 1)
+                        {
+                            sudokuBoard[row][col] = sudokuBoard[row][col].Except(valuesColToBeRemoved).ToList();
+                        }
+                    }
+                }
+
+                // SQUARES
+                for (int i = 0; i < sudokuSize; i += 3)
+                {
+                    for (int j = 0; j < sudokuSize; j += 3)
+                    {
+                        List<int> valuesRowToBeRemoved = new();
+                        for (int row = 0; row < 3; row++)
+                        {
+                            for (int col = 0; col < 3; col++)
+                            {
+                                if (sudokuBoard[i + row][j + col].Count is 1)
+                                {
+                                    valuesRowToBeRemoved.Add(sudokuBoard[i + row][j + col].First());
+                                }
+                            }
+                        }
+                        for (int row = 0; row < 3; row++)
+                        {
+                            for (int col = 0; col < 3; col++)
+                            {
+                                if (sudokuBoard[i + row][j + col].Count > 1)
+                                {
+                                    sudokuBoard[i + row][j + col] = sudokuBoard[i + row][j + col].Except(valuesRowToBeRemoved).ToList();
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return sudokuBoard;
+        }
+    }
+    #endregion
     #region 42. Trapping Rain Water
     public int Trap(int[] height)
     {
@@ -564,7 +722,7 @@ public class Solution
             }
             else
             {
-                total += max - height[leftIndex]; 
+                total += max - height[leftIndex];
             }
         }
 
@@ -591,11 +749,11 @@ public class Solution
     #region 50. Pow(x, n)
     public double MyPow(double x, int n)
     {
-        if (n is 0 || Math.Round(x,8) is 1)
+        if (n is 0 || Math.Round(x, 8) is 1)
         {
             return 1;
         }
-        if(x is -1)
+        if (x is -1)
         {
             return n % 2 is 0 ? -1 : 1;
         }
@@ -620,7 +778,7 @@ public class Solution
     }
     #endregion
     #region 58. Length of Last Word
-    public int LengthOfLastWord(string s) => 
+    public int LengthOfLastWord(string s) =>
          s.Trim().Split(' ').Last().Length;
     #endregion
     #region 66. Plus One
@@ -679,7 +837,7 @@ public class Solution
     #endregion
     #region 69. Sqrt(x)
     public int MySqrt(int x)
-    {        
+    {
         for (long i = 1; i < int.MaxValue; i++)
         {
             if (i * i > x)
@@ -697,7 +855,7 @@ public class Solution
         int b = 1;
         int c = 0;
         for (int i = 0; i < n; i++)
-        { 
+        {
             c = b + a;
             a = b;
             b = c;
@@ -717,14 +875,14 @@ public class Solution
             {
                 if (matrix[i][j] is 0)
                 {
-                    zeros.Add((i,j));
+                    zeros.Add((i, j));
                 }
             }
         }
 
         foreach ((int r, int c) in zeros)
         {
-            matrix[r] = new int[col]; 
+            matrix[r] = new int[col];
             for (int i = 0; i < row; i++)
             {
                 matrix[i][c] = 0;
@@ -830,8 +988,8 @@ public class Solution
             List<int> currentRow = new();
             for (int j = 0; j <= i; j++)
             {
-                int previousLeft = j - 1 >= 0 
-                    ? triangle[i - 1][j - 1] 
+                int previousLeft = j - 1 >= 0
+                    ? triangle[i - 1][j - 1]
                     : 0;
 
                 int previousCurrent = j < triangle[i - 1].Count
@@ -883,7 +1041,7 @@ public class Solution
             bitmask = 1;
             bitmask <<= i;
             bitmask &= n;
-            bitmask <<= 63 - (i+i);
+            bitmask <<= 63 - (i + i);
             reverseValue |= bitmask;
         }
         reverseValue >>= 32;
@@ -1068,6 +1226,17 @@ public class Solution
         return (x % 1 is 0);
     }
     #endregion
+    #region 338. Counting Bits
+    public int[] CountBits(int n)
+    {
+        int[] bits = new int[++n];
+        for (int i = 0; i < n; i++)
+        {
+            bits[i] = Convert.ToString(i, 2).Count(x => x is '1');
+        }
+        return bits;
+    }
+    #endregion
     #region 342. Power of Four
     public bool IsPowerOfFour(int n)
     {
@@ -1091,7 +1260,7 @@ public class Solution
             {
                 a++;
             } while (!vowels.Contains(chars[a]));
-            
+
             do
             {
                 b--;
@@ -1108,6 +1277,35 @@ public class Solution
             d += c;
         }
         return d;
+    }
+    #endregion
+    #region 374. Guess Number Higher or Lower
+    public static int GuessNumber(int n)
+    {
+        int num = n;
+        int lower = 1;
+        int upper = n;
+        while (lower <= upper)
+        {
+            int midpoint = Convert.ToInt32(((long)lower + upper) / 2);
+            if (guess(midpoint) is 0)
+            {
+                num = midpoint;
+                lower = 1;
+                upper = 0;
+            }
+            else if (guess(midpoint) is -1)
+            {
+                upper = midpoint - 1;
+            }
+            else
+            {
+                lower = midpoint + 1;
+            }
+        }
+        return num;
+
+        int guess(int num) => num == 1702766719 ? 0 : num > 1702766719 ? -1: 1;
     }
     #endregion
     #region 389. Find the Difference
@@ -1142,7 +1340,7 @@ public class Solution
         {
             if (s[i] != t[i] && t.Length > s.Length)
             {
-                t = t.Remove(i,1);
+                t = t.Remove(i, 1);
                 i--;
             }
         }
@@ -1260,7 +1458,7 @@ public class Solution
                 validPlant = validPlant && (i + 1 >= flowerbed.Length || flowerbed[i + 1] is 0);
 
                 if (validPlant)
-                { 
+                {
                     flowerbed[i] = 1;
                     planted = true;
                     count++;
@@ -1324,7 +1522,7 @@ public class Solution
                 nums.Add(i);
             }
         }
-        return nums;    
+        return nums;
     }
     #endregion
     #region 769. Max Chunks To Make Sorted
@@ -1445,13 +1643,13 @@ public class Solution
     #region 1108. Defanging an IP Address
     public string DefangIPaddr(string address)
     {
-        return address.Replace(".","[.]");
+        return address.Replace(".", "[.]");
     }
     #endregion
     #region 1137. N-th Tribonacci Number
     public int Tribonacci(int n)
     {
-        List<int> sequence = new(){ 0,1,1 };
+        List<int> sequence = new() { 0, 1, 1 };
         for (int i = 2; i < n; i++)
         {
             sequence.Add(sequence.Sum());
@@ -1509,12 +1707,37 @@ public class Solution
         return product - sum;
     }
     #endregion
+    #region 1282. Group the People Given the Group Size They Belong To
+    public static IList<IList<int>> GroupThePeople(int[] groupSizes)
+    {
+        List<int>[] groups = new List<int>[groupSizes.Length + 1];
+        for (int i = 0; i < groups.Length; i++)
+        {
+            groups[i] = new List<int>();
+        }
+        for (int i = 0; i < groupSizes.Length; i++)
+        {
+            groups[groupSizes[i]].Add(i);
+        }
+
+        List<List<int>> allGroups = new();
+        for (int i = 1; i < groups.Length; i++)
+        {
+            for (int j = 0; j < groups[i].Count; j += i)
+            {
+                allGroups.Add(groups[i].GetRange(j, i));
+            }
+        }
+
+        return allGroups.ToArray();
+    }
+    #endregion
     #region 1337. The K Weakest Rows in a Matrix
     public int[] KWeakestRows(int[][] mat, int k)
     {
         int rows = mat.Length;
         int cols = mat[0].Length;
-        List<(int,int soldiers)> allRows = new();
+        List<(int, int soldiers)> allRows = new();
         for (int i = 0; i < rows; i++)
         {
             int totalSoldiers = 0;
@@ -1522,9 +1745,9 @@ public class Solution
             {
                 totalSoldiers++;
             }
-            allRows.Add((i,totalSoldiers));
+            allRows.Add((i, totalSoldiers));
         }
-        (int index,int)[] weakestRows = allRows.OrderBy(x => x.soldiers).ToArray();
+        (int index, int)[] weakestRows = allRows.OrderBy(x => x.soldiers).ToArray();
         int[] indexes = new int[k];
         for (int i = 0; i < k; i++)
         {
@@ -1643,7 +1866,7 @@ public class Solution
                 {
                     validArithmetic[i] = false;
                 }
-            }           
+            }
         }
         return validArithmetic;
     }
@@ -1651,7 +1874,7 @@ public class Solution
     #region 1662. Check If Two String Arrays are Equivalent
     public bool ArrayStringsAreEqual(string[] word1, string[] word2)
     {
-        string a = string.Empty;   
+        string a = string.Empty;
         string b = string.Empty;
         foreach (string s in word1)
         {
@@ -1706,6 +1929,22 @@ public class Solution
         int col = coordinates[0] % 2;
         int row = coordinates[1] % 2;
         return col + row is 1;
+    }
+    #endregion
+    #region 1823. Find the Winner of the Circular Game
+    public static int FindTheWinner(int n, int k)
+    {
+        int i = 0;
+        List<int> nums = Enumerable.Range(1, n).ToList();
+        while (nums.Count > 1)
+        {
+            i += k;
+            i %= nums.Count;
+            nums.RemoveAt(i);
+            i--;
+        }
+        int num = nums[0] - 1;
+        return num is 0 ? n : num;
     }
     #endregion
     #region 1844. Replace All Digits with Characters
@@ -1763,7 +2002,7 @@ public class Solution
         }
         return rods.Count(x => x is not null && x.Length > 2 &&
         x.Contains('R') &&
-        x.Contains('B') && 
+        x.Contains('B') &&
         x.Contains('G'));
 
     }
@@ -1777,7 +2016,7 @@ public class Solution
     #region 2119. A Number After a Double Reversal
     public bool IsSameAfterReversals(int num)
     {
-        return num is 0 || num / 10 != num / 10d;        
+        return num is 0 || num / 10 != num / 10d;
     }
     #endregion
     #region 2164. Sort Even and Odd Indices Independently
@@ -1813,10 +2052,39 @@ public class Solution
         return nums;
     }
     #endregion
+    #region 2185. Counting Words With a Given Prefix
+    public int PrefixCount(string[] words, string pref)
+    {
+        int count = 0;
+        for (int i = 0; i < words.Length; i++)
+        {
+            if (words[i].StartsWith(pref))
+            {
+                count++;
+            }
+        }
+        return count;
+    }
+    #endregion
     #region 2215. Find the Difference of Two Arrays
     public IList<IList<int>> FindDifference(int[] nums1, int[] nums2)
     {
         return new List<int>[] { nums1.Except(nums2).ToList(), nums2.Except(nums1).ToList() };
+    }
+    #endregion
+    #region 2396. Strictly Palindromic Number
+    public bool IsStrictlyPalindromic(int n)
+    {
+        string numberInBase;
+        for (int i = 2; i <= n - 2; i++)
+        {
+            numberInBase = Convert.ToString(n, i);
+            if (numberInBase != string.Format("", numberInBase.Reverse()))
+            {
+                return false;
+            }
+        }
+        return true;
     }
     #endregion
     #region 2427. Number of Common Factors
@@ -1837,7 +2105,13 @@ public class Solution
     #region 2469. Convert the Temperature
     public double[] ConvertTemperature(double celsius)
     {
-        return new double[]{ celsius + 273.15, celsius * 1.80 + 32.00 };
+        return new double[] { celsius + 273.15, celsius * 1.80 + 32.00 };
+    }
+    #endregion
+    #region 2553. Separate the Digits in an Array
+    public int[] SeparateDigits(int[] nums)
+    {
+        return Array.ConvertAll(string.Join("", nums).ToCharArray(), x => x - '0');
     }
     #endregion
     #region 2574. Left and Right Sum Differences
@@ -1851,6 +2125,22 @@ public class Solution
             rightNums[i] = nums[++i..].Sum();
         }
         return leftNums.Zip(rightNums, (x, y) => Math.Abs(x - y)).ToArray();
+    }
+    #endregion
+    #region 2605. Form Smallest Number From Two Digit Arrays
+    public int MinNumber(int[] nums1, int[] nums2)
+    {
+        var common = nums1.Intersect(nums2);
+        if (common is not null && common.Count() > 0)
+        {
+            return common.Min();
+        }
+
+        int min1 = nums1.Min();
+        int min2 = nums2.Min();
+        return min1 < min2
+            ? int.Parse(string.Join("", min1, min2))
+            : int.Parse(string.Join("", min2, min1));
     }
     #endregion
     #region 2710. Remove Trailing Zeros From a String
@@ -1868,7 +2158,7 @@ public class Solution
     #region 2771. Longest Non-decreasing Subarray From Two Arrays
     public int MaxNonDecreasingLength(int[] nums1, int[] nums2)
     {
-        int[] nums3 = new int[nums1.Length];        
+        int[] nums3 = new int[nums1.Length];
         for (int i = 0; i < nums3.Length; i++)
         {
             int previous = 0;
@@ -1979,12 +2269,12 @@ public class ListNode
 {
     public int val;
     public ListNode next;
-    public ListNode(int val = 0, ListNode next = null) 
-    { 
+    public ListNode(int val = 0, ListNode next = null)
+    {
         this.val = val;
         this.next = next;
     }
- }
+}
 public class TreeNode
 {
     public int val;
