@@ -1,15 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-Console.WriteLine(  );
-
-int[][] flowers = new int[][]
-{
-    new int[] { 1, 10 },
-        new int[] { 3, 3 }
-};
-Solution.FullBloomFlowers(flowers,
-new int[] { 3,3,2});
 public class Solution
 {
     #region 1. Two Sum
@@ -854,6 +845,34 @@ public class Solution
         return triangle.ToArray();
     }
     #endregion
+    #region 128. Longest Consecutive Sequence
+    public static int LongestConsecutive(int[] nums)
+    {
+        if (nums.Length < 2)
+        {
+            return nums.Length;
+        }
+
+        Array.Sort(nums);
+        nums = nums.Distinct().ToArray();
+
+        int count = 1;
+        int max = 0;
+        for (int i = 0; i < nums.Length; i++)
+        {
+            if (nums.Contains(nums[i] + 1))
+            {
+                count++;
+            }
+            else
+            {
+                count = 1;
+            }
+            max = Math.Max(max, count);
+        }
+        return max;
+    }
+    #endregion
     #region 169. Majority Element
     public int MajorityElement(int[] nums)
     {
@@ -962,6 +981,17 @@ public class Solution
             previous = current;
         }
         return current;
+    }
+    #endregion
+    #region 222. Count Complete Tree Nodes
+    public int CountNodes(TreeNode root)
+    {
+        if (root is null)
+        {
+            return 0;
+        }
+
+        return CountNodes(root.left) + CountNodes(root.right) + 1; 
     }
     #endregion
     #region 229. Majority Element II
@@ -1173,7 +1203,7 @@ public class Solution
     }
     #endregion
     #region 409. Longest Palindrome
-    public int LongestPalindrome(string s)
+    public int LongestPalindrome2(string s)
     {
         char[] c = s.ToCharArray();
         Array.Sort(c);
