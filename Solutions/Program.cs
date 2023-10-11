@@ -1,12 +1,15 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-
-
-
-int[] a = new int[]{ 3, 5, 5, 2, 5, 5, 6, 6, 4, 4, 1, 1, 2, 5, 5, 6, 6, 4, 1, 3 };
-Solution.GuessNumber(2126753390);
 Console.WriteLine(  );
+
+int[][] flowers = new int[][]
+{
+    new int[] { 1, 10 },
+        new int[] { 3, 3 }
+};
+Solution.FullBloomFlowers(flowers,
+new int[] { 3,3,2});
 public class Solution
 {
     #region 1. Two Sum
@@ -525,157 +528,6 @@ public class Solution
             return numList.Count(x => x < target);
         }
         return index;
-    }
-    #endregion
-    #region 37. Sudoku Solver
-    public static void SolveSudoku(char[][] board)
-    {
-        var b = new char[][]{
-new char[]{'5', '1', '9', '7', '4', '8', '6', '3', '2'},
-new char[]{'7', '8', '3', '6', '5', '2', '4', '1', '9'},
-new char[]{'4', '2', '6', '1', '3', '9', '8', '7', '5'},
-new char[]{'3', '5', '7', '9', '8', '6', '2', '4', '1'},
-new char[]{'2', '6', '4', '3', '1', '7', '5', '9', '8'},
-new char[]{'1', '9', '8', '5', '2', '4', '3', '6', '7'},
-new char[]{'9', '7', '5', '8', '6', '3', '1', '2', '4'},
-new char[]{'8', '3', '2', '4', '9', '1', '7', '5', '6'},
-new char[]{'6', '4', '1', '2', '7', '5', '9', '8', '3'}};
-
-
-
-        int sudokuSize = 9;
-        List<int>[][] allPossibleNumbers = new List<int>[sudokuSize][];
-        for (int i = 0; i < sudokuSize; i++)
-        {
-            allPossibleNumbers[i] = new List<int>[sudokuSize];
-            for (int j = 0; j < sudokuSize; j++)
-            {
-                allPossibleNumbers[i][j] = board[i][j] is '.'
-                    ? Enumerable.Range(1, 9).ToList()
-                    : new List<int>() { board[i][j] - '0' };
-            }
-        }
-
-        // Complete most of board
-        DoRepeats(allPossibleNumbers);
-
-        //Brute force
-        for (int i = 0; i < sudokuSize; i++)
-        {
-            for (int j = 0; j < sudokuSize; j++)
-            {
-                for(int k = 0; k < allPossibleNumbers[i][j].Count; k++)
-                {
-                    var clone = allPossibleNumbers.ToArray();
-                    clone[i][j] = new List<int>() { allPossibleNumbers[i][j][k] };
-
-                    var permutation = DoRepeats(clone);
-                    while(permutation.Any(x => x.Any(y => y.Count != 1)))
-                    {
-                        allPossibleNumbers = permutation;
-
-                        Console.Clear();
-                        for (int a = 0; a < 9;a++)
-                        {
-                            for (int c = 0; c < 9; c++)
-                            {
-                                Console.ForegroundColor = (allPossibleNumbers[a][c].Count > 0 && b[a][c] == allPossibleNumbers[a][c][0] + '0') ? ConsoleColor.Green : ConsoleColor.Red;
-                                Console.Write(allPossibleNumbers[a][c].Count != 1 ? "  " : allPossibleNumbers[a][c].First() + " ");
-                            }
-                            Console.WriteLine();
-                        }
-                        Console.WriteLine();
-                        for (int a = 0; a < 9; a++)
-                        {
-                            for (int c = 0; c < 9; c++)
-                            {
-                                Console.Write(b[a][c] + " ");
-                            }
-                            Console.WriteLine();
-                        }
-                        return;
-                    }
-                }
-            }
-        }
-
-        List<int>[][] DoRepeats(List<int>[][] sudokuBoard)
-        {
-            for (int repeats = 0; repeats < sudokuSize; repeats++)
-            {
-                // ROWS
-                for (int row = 0; row < sudokuSize; row++)
-                {
-                    List<int> valuesRowToBeRemoved = new();
-                    for (int col = 0; col < sudokuSize; col++)
-                    {
-                        if (sudokuBoard[row][col].Count is 1)
-                        {
-                            valuesRowToBeRemoved.Add(sudokuBoard[row][col].First());
-                        }
-                    }
-
-                    for (int col = 0; col < sudokuSize; col++)
-                    {
-                        if (sudokuBoard[row][col].Count > 1)
-                        {
-                            sudokuBoard[row][col] = sudokuBoard[row][col].Except(valuesRowToBeRemoved).ToList();
-                        }
-                    }
-                }
-
-                // COLUMNS 
-                for (int col = 0; col < sudokuSize; col++)
-                {
-                    List<int> valuesColToBeRemoved = new();
-                    for (int row = 0; row < sudokuSize; row++)
-                    {
-                        if (sudokuBoard[row][col].Count is 1)
-                        {
-                            valuesColToBeRemoved.Add(sudokuBoard[row][col].First());
-                        }
-                    }
-
-                    for (int row = 0; row < sudokuSize; row++)
-                    {
-                        if (sudokuBoard[row][col].Count > 1)
-                        {
-                            sudokuBoard[row][col] = sudokuBoard[row][col].Except(valuesColToBeRemoved).ToList();
-                        }
-                    }
-                }
-
-                // SQUARES
-                for (int i = 0; i < sudokuSize; i += 3)
-                {
-                    for (int j = 0; j < sudokuSize; j += 3)
-                    {
-                        List<int> valuesRowToBeRemoved = new();
-                        for (int row = 0; row < 3; row++)
-                        {
-                            for (int col = 0; col < 3; col++)
-                            {
-                                if (sudokuBoard[i + row][j + col].Count is 1)
-                                {
-                                    valuesRowToBeRemoved.Add(sudokuBoard[i + row][j + col].First());
-                                }
-                            }
-                        }
-                        for (int row = 0; row < 3; row++)
-                        {
-                            for (int col = 0; col < 3; col++)
-                            {
-                                if (sudokuBoard[i + row][j + col].Count > 1)
-                                {
-                                    sudokuBoard[i + row][j + col] = sudokuBoard[i + row][j + col].Except(valuesRowToBeRemoved).ToList();
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            return sudokuBoard;
-        }
     }
     #endregion
     #region 42. Trapping Rain Water
@@ -1277,35 +1129,6 @@ new char[]{'6', '4', '1', '2', '7', '5', '9', '8', '3'}};
             d += c;
         }
         return d;
-    }
-    #endregion
-    #region 374. Guess Number Higher or Lower
-    public static int GuessNumber(int n)
-    {
-        int num = n;
-        int lower = 1;
-        int upper = n;
-        while (lower <= upper)
-        {
-            int midpoint = Convert.ToInt32(((long)lower + upper) / 2);
-            if (guess(midpoint) is 0)
-            {
-                num = midpoint;
-                lower = 1;
-                upper = 0;
-            }
-            else if (guess(midpoint) is -1)
-            {
-                upper = midpoint - 1;
-            }
-            else
-            {
-                lower = midpoint + 1;
-            }
-        }
-        return num;
-
-        int guess(int num) => num == 1702766719 ? 0 : num > 1702766719 ? -1: 1;
     }
     #endregion
     #region 389. Find the Difference
@@ -2070,6 +1893,55 @@ new char[]{'6', '4', '1', '2', '7', '5', '9', '8', '3'}};
     public IList<IList<int>> FindDifference(int[] nums1, int[] nums2)
     {
         return new List<int>[] { nums1.Except(nums2).ToList(), nums2.Except(nums1).ToList() };
+    }
+    #endregion
+    #region 2251. Number of Flowers in Full Bloom
+    public static int[] FullBloomFlowers(int[][] flowers, int[] people)
+    {
+        int flowerLength = flowers.Length;
+        int[] flowersStart = new int[flowerLength];
+        int[] flowersEnd = new int[flowerLength];
+
+        for (int i = 0; i < flowerLength; i++)
+        {
+            flowersStart[i] = flowers[i][0];
+            flowersEnd[i] = flowers[i][1];
+        }
+
+        Array.Sort(flowersStart);
+        Array.Sort(flowersEnd);
+
+        (int t, int i)[] peopleOrdered = new (int,int)[people.Length];
+        for (int i = 0; i < peopleOrdered.Length; i++)
+        {
+            peopleOrdered[i] = (people[i], i);
+        }
+        peopleOrdered = peopleOrdered.OrderBy(x => x.t).ToArray();
+
+        int numStarted = 0;
+        int numEnded = 0;
+        int[] flowersBlooming = new int[people.Length];
+        for (int i = 0; i < flowersBlooming.Length; i++)
+        {
+            for (int j = numStarted; j < flowerLength; j++)
+            {
+                if (flowersStart[j] > peopleOrdered[i].t)
+                {
+                    break;
+                }
+                numStarted = j + 1;
+            }
+            for (int j = numEnded; j < flowerLength; j++)
+            {
+                if (flowersEnd[j] >= peopleOrdered[i].t)
+                {
+                    break;
+                }
+                numEnded = j + 1;
+            }
+            flowersBlooming[peopleOrdered[i].i] = numStarted - numEnded;
+        }
+        return flowersBlooming;
     }
     #endregion
     #region 2396. Strictly Palindromic Number
