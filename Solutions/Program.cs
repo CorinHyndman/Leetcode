@@ -846,7 +846,7 @@ public class Solution
     }
     #endregion
     #region 128. Longest Consecutive Sequence
-    public static int LongestConsecutive(int[] nums)
+    public int LongestConsecutive(int[] nums)
     {
         if (nums.Length < 2)
         {
@@ -1493,6 +1493,99 @@ public class Solution
         return true;
     }
     #endregion
+    #region 1095. Find in Mountain Array
+    public int FindInMountainArray(int target, MountainArray mountainArr)
+    {
+        int left = 0;
+        int right = mountainArr.Length() - 1;
+        int peak = 0;
+        int num, numLeft, numRight, middle;
+        while (left <= right)
+        {
+            middle = (left + right + 1) / 2;
+            num = mountainArr.Get(middle);
+
+            numLeft = int.MaxValue;
+            if (middle - 1 >= 0)
+            {
+                numLeft = mountainArr.Get(middle - 1);
+            }
+
+            numRight = int.MaxValue;
+            if (middle + 1 <= mountainArr.Length() - 1)
+            {
+                numRight = mountainArr.Get(middle + 1);
+            }
+
+            if (num > numLeft && num > numRight)
+            {
+                peak = middle;
+                left = right + 1;
+            }
+            else if (numLeft < num && num < numRight)
+            {
+                left = middle + 1;
+            }
+            else
+            {
+                right = middle - 1;
+            }
+        }
+
+        foreach ((int l, int r) in new (int, int)[] { (0, peak), (peak, mountainArr.Length() - 1) })
+        {
+            left = l;
+            right = r;
+            while (left <= right)
+            {
+                middle = (left + right + 1) / 2;
+                num = mountainArr.Get(middle);
+
+                numLeft = int.MaxValue;
+                if (middle - 1 >= 0)
+                {
+                    numLeft = mountainArr.Get(middle - 1);
+                }
+
+                numRight = int.MaxValue;
+                if (middle + 1 <= mountainArr.Length() - 1)
+                {
+                    numRight = mountainArr.Get(middle + 1);
+                }
+
+                if (num == target)
+                {
+                    return middle;
+                }
+
+                if (numLeft < target && target < numRight)
+                {
+                    left = right + 1;
+                }
+                else if (num < target)
+                {
+                    left = middle + 1;
+                }
+                else
+                {
+                    right = middle - 1;
+                }
+            }
+        }
+
+        left = 0;
+        right = mountainArr.Length() - 1;
+        if (mountainArr.Get(left) == target)
+        {
+            return left;
+        }
+        if (mountainArr.Get(right) == target)
+        {
+            return right;
+        }
+        return -1;
+    }
+    #endregion
     #region 1108. Defanging an IP Address
     public string DefangIPaddr(string address)
     {
@@ -1561,7 +1654,7 @@ public class Solution
     }
     #endregion
     #region 1282. Group the People Given the Group Size They Belong To
-    public static IList<IList<int>> GroupThePeople(int[] groupSizes)
+    public IList<IList<int>> GroupThePeople(int[] groupSizes)
     {
         List<int>[] groups = new List<int>[groupSizes.Length + 1];
         for (int i = 0; i < groups.Length; i++)
@@ -1785,7 +1878,7 @@ public class Solution
     }
     #endregion
     #region 1823. Find the Winner of the Circular Game
-    public static int FindTheWinner(int n, int k)
+    public int FindTheWinner(int n, int k)
     {
         int i = 0;
         List<int> nums = Enumerable.Range(1, n).ToList();
@@ -1926,7 +2019,7 @@ public class Solution
     }
     #endregion
     #region 2251. Number of Flowers in Full Bloom
-    public static int[] FullBloomFlowers(int[][] flowers, int[] people)
+    public int[] FullBloomFlowers(int[][] flowers, int[] people)
     {
         int flowerLength = flowers.Length;
         int[] flowersStart = new int[flowerLength];
@@ -2188,5 +2281,10 @@ public class TreeNode
         this.left = left;
         this.right = right;
     }
+}
+public class MountainArray
+{
+    public int Get(int index) { return 0; }
+    public int Length() { return 0; }
 }
 #endregion
