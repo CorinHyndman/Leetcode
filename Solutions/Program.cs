@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-
+Solution.GcdOfStrings("ABABAB","ABAB");
 public class Solution
 {
     #region 1. Two Sum
@@ -1536,6 +1536,21 @@ public class Solution
             }
         }
         return true;
+    }
+    #endregion
+    #region 1071. Greatest Common Divisor of Strings
+    public static string GcdOfStrings(string str1, string str2)
+    {
+        string shortString = str1.Length <= str2.Length ? str1 : str2;
+        for (int i = shortString.Length; i > 0; i--)
+        {
+            if (str1.Replace(shortString[0..i], "") == string.Empty &&
+                str2.Replace(shortString[0..i], "") == string.Empty)
+            {
+                return shortString[0..i];
+            }
+        }
+        return string.Empty;
     }
     #endregion
     #region 1095. Find in Mountain Array
