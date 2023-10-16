@@ -819,6 +819,23 @@ public class Solution
         }
     }
     #endregion
+    #region 112. Path Sum
+    public bool HasPathSum(TreeNode root, int targetSum)
+    {
+        if (root is null)
+        {
+            return false;
+        }
+
+        targetSum -= root.val;
+        if (root.left is null && root.right is null && targetSum is 0)
+        {
+            return true;
+        }
+
+        return HasPathSum(root.left, targetSum) || HasPathSum(root.right, targetSum);
+    }
+    #endregion
     #region 118. Pascal's Triangle
     public IList<IList<int>> Generate(int numRows)
     {
