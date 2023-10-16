@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-Solution.GcdOfStrings("ABABAB","ABAB");
 public class Solution
 {
     #region 1. Two Sum
