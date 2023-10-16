@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+
 public class Solution
 {
     #region 1. Two Sum
@@ -843,6 +844,33 @@ public class Solution
             triangle.Add(currentRow);
         }
         return triangle.ToArray();
+    }
+    #endregion
+    #region 119. Pascal's Triangle II
+    public IList<int> GetRow(int rowIndex)
+    {
+        List<List<int>> triangle = new()
+        {
+            new() { 1 }
+        };
+
+        for (int i = 1; i < rowIndex; i++)
+        {
+            List<int> currentRow = new();
+            for (int j = 0; j <= i; j++)
+            {
+                int previousLeft = j - 1 >= 0
+                    ? triangle[i - 1][j - 1]
+                    : 0;
+
+                int previousCurrent = j < triangle[i - 1].Count
+                    ? triangle[i - 1][j]
+                    : 0;
+                currentRow.Add(previousCurrent + previousLeft);
+            }
+            triangle.Add(currentRow);
+        }
+        return triangle.Last();
     }
     #endregion
     #region 128. Longest Consecutive Sequence
