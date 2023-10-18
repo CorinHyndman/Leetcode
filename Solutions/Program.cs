@@ -1538,7 +1538,7 @@ public class Solution
     }
     #endregion
     #region 1071. Greatest Common Divisor of Strings
-    public static string GcdOfStrings(string str1, string str2)
+    public string GcdOfStrings(string str1, string str2)
     {
         string shortString = str1.Length <= str2.Length ? str1 : str2;
         for (int i = shortString.Length; i > 0; i--)
@@ -1901,6 +1901,12 @@ public class Solution
         return command;
     }
     #endregion
+    #region 1689. Partitioning Into Minimum Number Of Deci-Binary Numbers
+    public int MinPartitions(string n)
+    {
+        return n.Max() - '0';
+    }
+    #endregion
     #region 1720. Decode XORed Array
     public int[] Decode(int[] encoded, int first)
     {
@@ -1993,6 +1999,34 @@ public class Solution
             }
         }
         return num;
+    }
+    #endregion
+    #region 2085. Count Common Words With One Occurrence
+    public int CountWords(string[] words1, string[] words2)
+    {
+        string[] longest = null;
+        string[] shortest = null;
+        if (words1.Length <= words2.Length)
+        {
+            shortest = words1;
+            longest = words2;
+        }
+        else
+        {
+            shortest = words2;
+            longest = words1;
+        }
+
+        int count = 0;
+        for (int i = 0; i < shortest.Length; i++)
+        {
+            if (shortest.Count(x => x == shortest[i]) is 1 &&
+                longest.Count(x => x == shortest[i]) is 1)
+            {
+                count++;
+            }
+        }
+        return count;
     }
     #endregion
     #region 2103. Rings and Rods
