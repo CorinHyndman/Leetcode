@@ -1853,6 +1853,9 @@ public class Solution
         return count;
     }
     #endregion
+    #region 1603. Design Parking System
+    // See ParkingSystem class
+    #endregion
     #region 1630. Arithmetic Subarrays
     public IList<bool> CheckArithmeticSubarrays(int[] nums, int[] l, int[] r)
     {
@@ -2379,5 +2382,20 @@ public class MountainArray
 {
     public int Get(int index) { return 0; }
     public int Length() { return 0; }
+}
+public class ParkingSystem
+{
+    int[] spaces = new int[3];
+    public ParkingSystem(int big, int medium, int small)
+    {
+        spaces[0] = big;
+        spaces[1] = medium;
+        spaces[2] = small;
+    }
+
+    public bool AddCar(int carType)
+    {
+        return --spaces[carType - 1] >= 0;
+    }
 }
 #endregion
