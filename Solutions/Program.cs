@@ -1,6 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.Design.Serialization;
 using System.Linq;
 using System.Numerics;
+using System.Runtime.InteropServices;
+
+Console.WriteLine(Solution.KthGrammar(30, 434991989));
+
 public class Solution
 {
     #region 1. Two Sum
@@ -803,6 +809,37 @@ public class Solution
         }
     }
     #endregion
+    #region 101. Symmetric Tree
+    public bool IsSymmetric(TreeNode root)
+    {
+        var leftSide = GetOrder(root.left, new List<int>(), true);
+        var rightSide = GetOrder(root.right, new List<int>(), false);
+        return leftSide.SequenceEqual(rightSide);
+
+        List<int> GetOrder(TreeNode node, List<int> current, bool leftPriorty)
+        {
+            if (node is null)
+            {
+                current.Add(-1);
+                return current;
+            }
+
+            current.Add(node.val);
+
+            if (leftPriorty)
+            {
+                current = GetOrder(node.left, current, leftPriorty);
+                current = GetOrder(node.right, current, leftPriorty);
+            }
+            else
+            {
+                current = GetOrder(node.right, current, leftPriorty);
+                current = GetOrder(node.left, current, leftPriorty);
+            }
+            return current;
+        }
+    }
+    #endregion
     #region 104. Maximum Depth of Binary Tree
     public int MaxDepth(TreeNode root)
     {
@@ -981,6 +1018,31 @@ public class Solution
         return numOnes;
     }
     #endregion
+    #region 202. Happy Number
+    public bool IsHappy(int n)
+    {
+        int val;
+        string nString;
+        List<int> visitedNums = new();
+        while (!visitedNums.Contains(n))
+        {
+            visitedNums.Add(n);
+            nString = n.ToString();
+            n = 0;
+            for (int i = 0; i < nString.Length; i++)
+            {
+                val = nString[i] - '0';
+                n += val * val;
+            }
+
+            if (n is 1)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+    #endregion
     #region 205. Isomorphic Strings
     public bool IsIsomorphic(string s, string t)
     {
@@ -1125,6 +1187,24 @@ public class Solution
         return total;
     }
     #endregion
+    #region 263. Ugly Number
+    public bool IsUgly(int n)
+    {
+        if (n <= 0)
+        {
+            return false;
+        }
+
+        foreach (int i in new int[] { 2,3,5 })
+        {
+            while (n % i is 0)
+            {
+                n /= i;
+            }
+        }
+        return n is 1;
+    }
+    #endregion
     #region 283. Move Zeroes
     public void MoveZeroes(int[] nums)
     {
@@ -1167,7 +1247,6 @@ public class Solution
     public bool IsPowerOfFour(int n)
     {
         double x = Math.Log(n) / Math.Log(4);
-        x = Math.Round(x, 10);
         return (x % 1 is 0);
     }
     #endregion
@@ -1314,6 +1393,34 @@ public class Solution
             }
         }
         return false;
+    }
+    #endregion
+    #region 515. Find Largest Value in Each Tree Row
+    public IList<int> LargestValues(TreeNode root)
+    {
+        List<int> max = new();
+        SearchTree(root, 0);
+        return max.ToArray();
+
+        void SearchTree(TreeNode node, int depth)
+        {
+            if (node is null)
+            {
+                return;
+            }
+
+            if (max.Count <= depth)
+            {
+                max.Add(node.val);
+            }
+            else
+            {
+                max[depth] = Math.Max(node.val, max[depth]);
+            }
+
+            SearchTree(node.left, depth + 1);
+            SearchTree(node.right, depth + 1);
+        }
     }
     #endregion
     #region 557. Reverse Words in a String III
@@ -1463,6 +1570,59 @@ public class Solution
             }
         }
         return total;
+    }
+    #endregion
+    #region 775. Global and Local Inversions
+    public bool IsIdealPermutation(int[] nums)
+    {
+        for (int i = 0; i < nums.Length; i++)
+        {
+            if (Math.Abs(i - nums[i]) > 1)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+    #endregion
+    #region 779. K-th Symbol in Grammar
+    public static int KthGrammar(int n, int k)
+    {
+        List<int> treeTraversalOrder = new();
+
+        int current = k;
+        while (current != 1)
+        {
+            treeTraversalOrder.Add(current);
+            if (current % 2 is 0)
+            {
+                current /= 2;
+            }
+            else
+            {
+                current++;
+                current /= 2;
+            }
+        }
+        treeTraversalOrder.Reverse();
+        return FindKthNum(0,1,0,k);
+
+        int FindKthNum(int row, int column, int value, int target)
+        {
+            if (column == target)
+            {
+                return value;
+            }
+
+            if (treeTraversalOrder[row] == column * 2)
+            {
+                return FindKthNum(row + 1, (column * 2), value is 1 ? 0 : 1, target);
+            }
+            else
+            {
+                return FindKthNum(row + 1, (column * 2) - 1, value, target);
+            }
+        }
     }
     #endregion
     #region 896. Monotonic Array
@@ -1770,6 +1930,36 @@ public class Solution
             numCount[i] = nums.Count(x => x < nums[i]);
         }
         return numCount;
+    }
+    #endregion
+    #region 1379. Find a Corresponding Node of a Binary Tree in a Clone of That Tree
+    public TreeNode GetTargetCopy(TreeNode original, TreeNode cloned, TreeNode target)
+    {
+        return FindTargetValue(cloned, target.val);
+
+        TreeNode FindTargetValue(TreeNode node, int target)
+        {
+            if(node is null)
+            {
+                return null;
+            }
+
+            if (node.val == target)
+            {
+                return node;
+            }
+
+            TreeNode left = FindTargetValue(node.left, target);
+            TreeNode right = FindTargetValue(node.right, target);
+            if (left is not null)
+            {
+                return left;
+            }
+            else
+            {
+                return right;
+            }
+        }
     }
     #endregion
     #region 1431. Kids With the Greatest Number of Candies
