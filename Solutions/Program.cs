@@ -5,7 +5,7 @@ using System.Linq;
 using System.Numerics;
 using System.Runtime.InteropServices;
 
-Console.WriteLine(Solution.KthGrammar(30, 434991989));
+Console.WriteLine(Solution.ThreeSum(new int[] { 0, 1, -1 }));
 
 public class Solution
 {
@@ -94,8 +94,79 @@ public class Solution
         return median;
     }
     #endregion
+    #region 5. Longest Palindromic Substring
+    public static string LongestPalindrome(string s)
+    {
+        int l, r, size;
+        int sLength = s.Length;
+        string longestSubstring = s[0].ToString();
+        for (int i = 0; i < s.Length; i++)
+        {
+            size = 1;
+            for (int j = 1; j <= Math.Min(i, sLength - i - 1); j++)
+            {
+                l = i - j;
+                r = i + j;
+                if (s[l] == s[r])
+                {
+                    size += 2;
+                    if (size > longestSubstring.Length)
+                    {
+                        longestSubstring = s[l..(r + 1)];
+                    }
+                }
+                else
+                {                    
+                    break;
+                }
+            }
+
+            size = 1;
+            for (int j = 1; j <= Math.Min(i, sLength - i); j++)
+            {
+                l = i - j;
+                r = i + j - 1;
+                if (s[l] == s[r])
+                {
+                    size += 2;
+                    if (size > longestSubstring.Length)
+                    {
+                        longestSubstring = s[l..(r + 1)];
+                    }
+                }
+                else
+                {
+                    break;
+                }
+            }
+        }
+        return longestSubstring;
+
+        //char currentChar;
+        //string subString;
+        //string longestSubstring = s[0].ToString();
+        //for (int i = 0; i < s.Length; i++)
+        //{
+        //    currentChar = s[i];
+        //    for (int j = s.Length - 1; i + j >= longestSubstring.Length && j > i; j--)
+        //    {
+        //        if (s[j] == currentChar)
+        //        {
+        //            subString = s[i..(j + 1)];
+        //            if (subString.Length > longestSubstring.Length &&
+        //                subString == string.Join("",subString.Reverse()))
+        //            {
+        //                longestSubstring = subString;
+        //                break;
+        //            }
+        //        }
+        //    }
+        //}
+        //return longestSubstring;
+    }
+    #endregion
     #region 6. Zigzag Conversion
-    public string Convert6(string s, int numRows)
+        public string Convert6(string s, int numRows)
     {
         if (numRows is 1)
         {
@@ -224,6 +295,56 @@ public class Solution
             }
         }
         return maxVol;
+    }
+    #endregion
+    #region 12. Integer to Roman
+    public static string IntToRoman(int num)
+    {
+        Dictionary<int, char> romanNumerals = new()
+        {
+            {1 ,   'I'},
+            {5 ,   'V'},
+            {10,   'X'},
+            {50,   'L'},
+            {100,  'C'},
+            {500,  'D'},
+            {1000, 'M'},
+        };
+
+        string romanNumeral = string.Empty;
+        int currentNum, realValue;        
+        int currentPow = 1;
+        while (num > 0)
+        {
+            currentNum = num % 10;
+
+            realValue = currentNum * currentPow;
+            if (romanNumerals.ContainsKey(realValue))
+            {
+                romanNumeral = romanNumerals[realValue] + romanNumeral;
+            }
+            else
+            {
+                if (currentNum is 4 or 9)
+                {
+                    romanNumeral = String.Join("", romanNumerals[currentPow], romanNumerals[(currentNum + 1) * currentPow], romanNumeral);
+                }
+                else
+                {
+                    for (int i = 0; i < currentNum % 5; i++)
+                    {
+                        romanNumeral = romanNumerals[currentPow] + romanNumeral;
+                    }
+                    if (currentNum > 5)
+                    {
+                        romanNumeral = romanNumerals[5 * currentPow] + romanNumeral;
+                    }
+                }
+            }
+            currentPow *= 10;
+            num /= 10;
+        }
+        return romanNumeral;
     }
     #endregion
     #region 13. Roman to Integer
