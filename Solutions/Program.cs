@@ -5,7 +5,7 @@ using System.Globalization;
 using System.Linq;
 using System.Numerics;
 using System.Runtime.InteropServices;
-var a = Solution.SearchRotatedSortedArray(new int[] { 4, 5, 6, 7, 0, 1, 2 }, 0);
+var a = Solution.CountAndSay(4);
 Console.WriteLine(  );
 public class Solution
 {
@@ -523,6 +523,37 @@ public class Solution
         return current;
     }
     #endregion
+    #region 24. Swap Nodes in Pairs
+    public ListNode SwapPairs(ListNode head)
+    {
+        List<ListNode> nodes = new();
+        while (head is not null)
+        {
+            nodes.Add(head);
+            head = head.next;
+        }
+
+        Console.WriteLine(nodes.Count);
+        for (int i = 1; i < nodes.Count; i += 2)
+        {
+            var next = nodes[i - 1];
+            nodes[i - 1] = nodes[i];
+            nodes[i] = next;
+        }
+        for (int i = 0; i + 1 < nodes.Count; i++)
+        {
+            nodes[i].next = nodes[i + 1];
+        }
+        
+        if (nodes.Count > 0)
+        {
+            nodes[^1].next = null;
+            return nodes[0];
+        }
+
+        return null;
+    }
+    #endregion
     #region 26. Remove Duplicates from Sorted Array
     public int RemoveDuplicates(int[] nums)
     {
@@ -676,6 +707,7 @@ public class Solution
         if (index is not -1)
         {
             index += pivot;
+            index %= nums.Length;
         }
         return index;
     }
@@ -797,6 +829,30 @@ public class Solution
             }
         }
         return true;
+    }
+    #endregion
+    #region 38. Count and Say
+    public static string CountAndSay(int n)
+    {
+        string nums = "1";
+        string nextNum = string.Empty;
+        for (int i = 1; i < n; i++)
+        {
+            int count = 0;
+            for (int j = 0; j < nums.Length; j++)
+            {
+                count++;
+                if (j + 1 >= nums.Length || nums[j] != nums[j + 1])
+                {
+                    nextNum += (char)(count + '0');
+                    nextNum += nums[j];
+                    count = 0;
+                }
+            }
+            nums = nextNum;
+            nextNum = string.Empty;
+        }
+        return nums;
     }
     #endregion
     #region 42. Trapping Rain Water
@@ -1034,6 +1090,13 @@ public class Solution
                 return;
             }
         }
+    }
+    #endregion
+    #region 81. Search in Rotated Sorted Array II
+    public bool SearchRotatedSortedArrayII(int[] nums, int target)
+    {
+        Array.Sort(nums);
+        return Array.BinarySearch(nums, target) >= 0;
     }
     #endregion
     #region 83. Remove Duplicates from Sorted List
