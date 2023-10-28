@@ -4,9 +4,6 @@ using System.ComponentModel.Design.Serialization;
 using System.Linq;
 using System.Numerics;
 using System.Runtime.InteropServices;
-
-Console.WriteLine(Solution.Divide(-2147483648, -1));
-
 public class Solution
 {
     #region 1. Two Sum
@@ -95,7 +92,7 @@ public class Solution
     }
     #endregion
     #region 5. Longest Palindromic Substring
-    public static string LongestPalindrome(string s)
+    public string LongestPalindrome(string s)
     {
         int l, r, size;
         int sLength = s.Length;
@@ -298,7 +295,7 @@ public class Solution
     }
     #endregion
     #region 12. Integer to Roman
-    public static string IntToRoman(int num)
+    public string IntToRoman(int num)
     {
         Dictionary<int, char> romanNumerals = new()
         {
@@ -581,7 +578,7 @@ public class Solution
     }
     #endregion
     #region 29. Divide Two Integers
-    public static int Divide(int dividend, int divisor)
+    public int Divide(int dividend, int divisor)
     {
         bool negative = dividend < 0 ^ divisor < 0;
         long count = 0;
@@ -1752,7 +1749,7 @@ public class Solution
     }
     #endregion
     #region 779. K-th Symbol in Grammar
-    public static int KthGrammar(int n, int k)
+    public int KthGrammar(int n, int k)
     {
         List<int> treeTraversalOrder = new();
 
