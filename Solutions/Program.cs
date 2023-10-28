@@ -5,7 +5,7 @@ using System.Linq;
 using System.Numerics;
 using System.Runtime.InteropServices;
 
-Console.WriteLine(Solution.ThreeSum(new int[] { 0, 1, -1 }));
+Console.WriteLine(Solution.Divide(-2147483648, -1));
 
 public class Solution
 {
@@ -443,6 +443,32 @@ public class Solution
         return combinations;
     }
     #endregion
+    #region 19. Remove Nth Node From End of List
+    public ListNode RemoveNthFromEnd(ListNode head, int n)
+    {
+        List<ListNode> nodes = new();
+        while (head != null)
+        {
+            nodes.Add(head);
+            head = head.next;
+        }
+
+        int index = nodes.Count - n;
+        if (index - 1 >= 0 && index + 1 < nodes.Count)
+        {
+            nodes[index - 1].next = nodes[index + 1];
+        }
+
+        nodes.RemoveAt(index);
+
+        if (nodes.Count > 0)
+        {
+            nodes[^1].next = null;
+        }
+
+        return nodes.Count > 0 ? nodes[0] : null;
+    }
+    #endregion
     #region 20. Valid Parentheses
     public bool IsValid(string s)
     {
@@ -552,6 +578,25 @@ public class Solution
             }
         }
         return -1;
+    }
+    #endregion
+    #region 29. Divide Two Integers
+    public static int Divide(int dividend, int divisor)
+    {
+        bool negative = dividend < 0 ^ divisor < 0;
+        long count = 0;
+        long absDivisor = Math.Abs((long)divisor);
+        long absDividend = Math.Abs((long)dividend);
+        for (long i = absDividend; i >= absDivisor; i -= absDivisor)
+        {
+            count++;
+        }
+
+        if (count > int.MaxValue)
+        {
+            return negative ? int.MinValue :int.MaxValue;
+        }
+        return negative ? (int)-count : (int)count;
     }
     #endregion
     #region 30. Substring with Concatenation of All Words
