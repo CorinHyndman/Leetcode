@@ -690,6 +690,69 @@ public class Solution
         return index;
     }
     #endregion
+    #region 36. Valid Sudoku
+    public bool IsValidSudoku(char[][] board)
+    {
+        int boardSize = 9;
+        int squareSize = 3;
+        char currentChar;
+        List<int> charsPresent = new();
+        for (int i = 0; i < boardSize; i++)
+        {
+            charsPresent.Clear();
+            for (int j = 0; j < boardSize; j++)
+            {
+                currentChar = board[i][j];
+                if (charsPresent.Contains(currentChar))
+                {
+                    return false;
+                }
+                else if (currentChar != '.')
+                {
+                    charsPresent.Add(currentChar);
+                }
+            }
+
+            charsPresent.Clear();
+            for (int j = 0; j < boardSize; j++)
+            {
+                currentChar = board[j][i];
+                if (charsPresent.Contains(currentChar))
+                {
+                    return false;
+                }
+                else if (currentChar != '.')
+                {
+                    charsPresent.Add(currentChar);
+                }
+            }
+        }
+
+        for (int row = 0; row < boardSize; row += squareSize)
+        {
+            for (int col = 0; col < boardSize; col += squareSize)
+            {
+                charsPresent.Clear();
+                for (int i = row; i < row + squareSize; i++)
+                {
+                    for (int j = col; j < col + squareSize; j++)
+                    {
+                        currentChar = board[i][j];
+                        if (charsPresent.Contains(currentChar))
+                        {
+                            return false;
+                        }
+                        else if (currentChar != '.')
+                        {
+                            charsPresent.Add(currentChar);
+                        }
+                    }
+                }
+            }
+        }
+        return true;
+    }
+    #endregion
     #region 42. Trapping Rain Water
     public int Trap(int[] height)
     {
