@@ -5,8 +5,6 @@ using System.Globalization;
 using System.Linq;
 using System.Numerics;
 using System.Runtime.InteropServices;
-var a = Solution.CountAndSay(4);
-Console.WriteLine(  );
 public class Solution
 {
     #region 1. Two Sum
@@ -669,7 +667,7 @@ public class Solution
     }
     #endregion
     #region 33. Search in Rotated Sorted Array
-    public static int SearchRotatedSortedArray(int[] nums, int target)
+    public int SearchRotatedSortedArray(int[] nums, int target)
     {
         int pivot = 0;
         for (int i = 0; i + 1 < nums.Length; i++)
@@ -832,7 +830,7 @@ public class Solution
     }
     #endregion
     #region 38. Count and Say
-    public static string CountAndSay(int n)
+    public string CountAndSay(int n)
     {
         string nums = "1";
         string nextNum = string.Empty;
