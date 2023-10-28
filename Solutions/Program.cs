@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Design.Serialization;
+using System.Globalization;
 using System.Linq;
 using System.Numerics;
 using System.Runtime.InteropServices;
+var a = Solution.SearchRotatedSortedArray(new int[] { 4, 5, 6, 7, 0, 1, 2 }, 0);
+Console.WriteLine(  );
 public class Solution
 {
     #region 1. Two Sum
@@ -632,6 +635,49 @@ public class Solution
             }
         }
         return list;
+    }
+    #endregion
+    #region 33. Search in Rotated Sorted Array
+    public static int SearchRotatedSortedArray(int[] nums, int target)
+    {
+        int pivot = 0;
+        for (int i = 0; i + 1 < nums.Length; i++)
+        {
+            if (nums[i] > nums[i + 1])
+            {
+                pivot = i + 1;
+                break;
+            }
+        }
+        nums = nums[pivot..].Concat(nums[0..pivot]).ToArray();
+
+        int index = -1;
+        int lower = 0;
+        int upper = nums.Length - 1;
+        while (lower <= upper)
+        {
+            int midpoint = (lower + upper) / 2;
+            if (nums[midpoint] == target)
+            {
+                index = midpoint;
+                lower = 1;
+                upper = 0;
+            }
+            else if (nums[midpoint] > target)
+            {
+                upper = midpoint - 1;
+            }
+            else
+            {
+                lower = midpoint + 1;
+            }
+        }
+
+        if (index is not -1)
+        {
+            index += pivot;
+        }
+        return index;
     }
     #endregion
     #region 34. Find First and Last Position of Element in Sorted Array
