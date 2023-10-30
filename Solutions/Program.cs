@@ -2254,6 +2254,13 @@ public class Solution
         return indexes;
     }
     #endregion
+    #region 1356. Sort Integers by The Number of 1 Bits
+    public int[] SortByBits(int[] arr)
+    {
+        return arr.OrderBy(x => bitCount(x)).ThenBy(x => x).ToArray();
+        int bitCount(int num) => Convert.ToString(num,2).Count(x => x is '1');
+    }
+    #endregion
     #region 1365. How Many Numbers Are Smaller Than the Current Number
     public int[] SmallerNumbersThanCurrent(int[] nums)
     {
