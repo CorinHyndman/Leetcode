@@ -5,6 +5,7 @@ using System.Globalization;
 using System.Linq;
 using System.Numerics;
 using System.Runtime.InteropServices;
+Solution.BuildArray(new int[] {1,3 },3);
 public class Solution
 {
     #region 1. Two Sum
@@ -1728,6 +1729,30 @@ public class Solution
         return false;
     }
     #endregion
+    #region 501. Find Mode in Binary Search Tree
+    public int[] FindMode(TreeNode root)
+    {
+        List<int> allNums = new();
+        Traverse(root);
+
+        ILookup<int,int> lookup = allNums.ToLookup(x => x);
+        int modeNum = lookup.Max(x => x.Count());
+        return lookup.Where(x => x.Count() == modeNum)
+            .Select(x => x.Key)
+            .ToArray();
+
+        void Traverse(TreeNode node)
+        {
+            if (node is null)
+            {
+                return;
+            }
+            allNums.Add(node.val);
+            Traverse(node.left);
+            Traverse(node.right);
+        }
+    }
+    #endregion
     #region 515. Find Largest Value in Each Tree Row
     public IList<int> LargestValues(TreeNode root)
     {
@@ -2314,6 +2339,42 @@ public class Solution
         return overMax;
     }
     #endregion
+    #region 1441. Build an Array With Stack Operations
+    public static IList<string> BuildArray(int[] target, int n)
+    {
+        Stack<int> nums = new();
+        List<string> operations = new();
+
+        int stackTop = 0;
+        bool success = false;
+        int targetPointer = 0;
+        for (int i = 1; i <= n; i++)
+        {
+            if (targetPointer == target.Length || nums.SequenceEqual(target))
+            {
+                break;
+            }
+
+            nums.Push(i);
+            operations.Add("Push");
+            success = nums.TryPeek(out stackTop);
+
+            if (success)
+            {
+                if (stackTop != target[targetPointer])
+                {
+                    nums.Pop();
+                    operations.Add("Pop");
+                }
+                else
+                {
+                    targetPointer++;
+                }
+            }
+        }
+        return operations;
+    }
+    #endregion
     #region 1470. Shuffle the Array
     public int[] Shuffle(int[] nums, int n)
     {
@@ -2721,6 +2782,13 @@ public class Solution
             }
         }
         return factors;
+    }
+    #endregion
+    #region 2433. Find The Original Array of Prefix Xor
+    public int[] FindArray(int[] pref)
+    {
+        int[] array = new int[pref.Length];
+        return null;
     }
     #endregion
     #region 2469. Convert the Temperature
