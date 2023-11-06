@@ -1,11 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.Design.Serialization;
 using System.Globalization;
 using System.Linq;
 using System.Numerics;
 using System.Runtime.InteropServices;
-Solution.BuildArray(new int[] {1,3 },3);
+using System.Security.Principal;
+
+SeatManager seatManager = new SeatManager(5); // Initializes a SeatManager with 5 seats.
+seatManager.Reserve();    // All seats are available, so return the lowest numbered seat, which is 1.
+seatManager.Reserve();    // The available seats are [2,3,4,5], so return the lowest of them, which is 2.
+seatManager.Unreserve(2); // Unreserve seat 2, so now the available seats are [2,3,4,5].
+seatManager.Reserve();    // The available seats are [2,3,4,5], so return the lowest of them, which is 2.
+seatManager.Reserve();    // The available seats are [3,4,5], so return the lowest of them, which is 3.
+seatManager.Reserve();    // The available seats are [4,5], so return the lowest of them, which is 4.
+seatManager.Reserve();    // The only available seat is seat 5, so return 5.
+seatManager.Unreserve(5); // Unreserve seat 5, so now the available seats are [5].
+Console.WriteLine(  );
 public class Solution
 {
     #region 1. Two Sum
@@ -2357,6 +2369,7 @@ public class Solution
 
             nums.Push(i);
             operations.Add("Push");
+
             success = nums.TryPeek(out stackTop);
 
             if (success)
@@ -2442,6 +2455,37 @@ public class Solution
             }
         }
         return count;
+    }
+    #endregion
+    #region 1535. Find the Winner of an Array Game
+    public static int GetWinner(int[] arr, int k)
+    {
+        int count = 0;
+        int currentNum = arr[0];
+        Queue<int> nums = new(arr[1..]);
+
+        if (k >= arr.Length)
+        {
+            return arr.Max();
+        }
+
+        int nextNum;
+        while (count != k)
+        {
+            nextNum = nums.Dequeue();
+            if (currentNum < nextNum)
+            {
+                nums.Enqueue(currentNum);
+                currentNum = nextNum;
+                count = 1;
+            }
+            else
+            {
+                nums.Enqueue(nextNum);
+                count++;
+            }
+        }
+        return currentNum;
     }
     #endregion
     #region 1603. Design Parking System
@@ -2565,6 +2609,9 @@ public class Solution
         }
         return new string(chars);
     }
+    #endregion
+    #region 1845. Seat Reservation Manager
+    // See SeatManager Class
     #endregion
     #region 1920. Build Array from Permutation
     public int[] BuildArray(int[] nums)
@@ -2994,6 +3041,39 @@ public class ParkingSystem
     public bool AddCar(int carType)
     {
         return --spaces[carType - 1] >= 0;
+    }
+}
+public class SeatManager
+{
+    private int nextReserve = 1;
+    private int range = 0;
+    private List<int> reserved = new();
+    private List<int> unreserved = new();
+    public SeatManager(int n)
+    {
+        range = n;
+    }
+
+    public int Reserve()
+    {
+        if (unreserved.Count > 0 && unreserved.Min() < nextReserve)
+        {
+            int min = unreserved.Min();
+            reserved.Add(min);
+            unreserved.Remove(min);
+            return min;
+        }
+        else
+        {
+            reserved.Add(nextReserve);
+            return nextReserve++;
+        }
+    }
+
+    public void Unreserve(int seatNumber)
+    {
+        reserved.Remove(seatNumber);
+        unreserved.Add(seatNumber);
     }
 }
 #endregion
